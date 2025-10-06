@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vehicle Acquisition Tracker</title>
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS CDN (utilities only) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -13,18 +14,35 @@
   <!-- SheetJS for XLSX -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
-    .card { @apply bg-white rounded-2xl shadow-sm border border-slate-100 p-6; }
-    .btn  { @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 font-medium shadow-sm; }
-    .btn-primary { @apply bg-indigo-600 text-white hover:bg-indigo-700; }
-    .btn-green { @apply bg-emerald-600 text-white hover:bg-emerald-700; }
-    .btn-blue { @apply bg-blue-600 text-white hover:bg-blue-700; }
-    .btn-purple { @apply bg-purple-600 text-white hover:bg-purple-700; }
-    .chip { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold; }
+    .card {
+      background: #ffffff;
+      border-radius: 1rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 1px 3px rgba(0,0,0,.06);
+      border: 1px solid #e2e8f0;
+      padding: 1.5rem;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      border-radius: .75rem; padding: .5rem 1rem; font-weight: 500;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04); border:none; cursor:pointer;
+    }
+    .btn-primary { background:#4f46e5; color:#fff; }
+    .btn-primary:hover { background:#4338ca; }
+    .btn-green { background:#059669; color:#fff; }
+    .btn-green:hover { background:#047857; }
+    .btn-blue { background:#2563eb; color:#fff; }
+    .btn-blue:hover { background:#1d4ed8; }
+    .btn-purple { background:#7c3aed; color:#fff; }
+    .btn-purple:hover { background:#6d28d9; }
+    .chip { display:inline-flex; align-items:center; padding:.125rem .625rem; border-radius:9999px; font-size:.75rem; font-weight:600; }
+    .chip-emerald { background:#d1fae5; color:#065f46; }
+    .chip-amber { background:#fde68a; color:#92400e; }
+    .input, .select { width:100%; border:1px solid #e2e8f0; border-radius:.75rem; padding:.5rem .75rem; outline:none; }
+    .input:focus, .select:focus { box-shadow: 0 0 0 3px rgba(79,70,229,.25); }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
   <div class="max-w-6xl mx-auto px-4 py-8">
-    <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div>
         <h1 class="text-4xl font-black tracking-tight">Vehicle Acquisition Tracker</h1>
@@ -44,7 +62,6 @@
       </div>
     </div>
 
-    <!-- KPI Cards -->
     <div class="grid md:grid-cols-2 gap-4 mt-6">
       <div class="card flex justify-between items-center">
         <div>
@@ -76,17 +93,16 @@
       </div>
     </div>
 
-    <!-- Table + Filters -->
     <div class="card mt-6">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-3 w-full md:w-auto">
           <div>
             <label class="text-xs text-slate-500">Search</label>
-            <input id="searchInput" class="w-full rounded-xl border-slate-200 focus:ring-2 focus:ring-indigo-500" placeholder="VIN, model, dealer..." />
+            <input id="searchInput" class="input" placeholder="VIN, model, dealer..." />
           </div>
           <div>
             <label class="text-xs text-slate-500">Status</label>
-            <select id="statusFilter" class="w-full rounded-xl border-slate-200 focus:ring-2 focus:ring-indigo-500">
+            <select id="statusFilter" class="select">
               <option value="">All</option>
               <option>Cleared</option>
               <option>Pending</option>
@@ -94,7 +110,7 @@
           </div>
           <div>
             <label class="text-xs text-slate-500">Method</label>
-            <select id="methodFilter" class="w-full rounded-xl border-slate-200 focus:ring-2 focus:ring-indigo-500">
+            <select id="methodFilter" class="select">
               <option value="">All</option>
               <option>Wire</option>
               <option>Check</option>
@@ -104,10 +120,10 @@
           </div>
           <div>
             <label class="text-xs text-slate-500">Min Amount</label>
-            <input id="minAmt" type="number" class="w-full rounded-xl border-slate-200 focus:ring-2 focus:ring-indigo-500" placeholder="0" />
+            <input id="minAmt" type="number" class="input" placeholder="0" />
           </div>
         </div>
-        <button id="clearFilters" class="btn bg-slate-100 hover:bg-slate-200">Clear</button>
+        <button id="clearFilters" class="btn" style="background:#f1f5f9;">Clear</button>
       </div>
 
       <div class="overflow-x-auto mt-4">
@@ -132,7 +148,6 @@
     </div>
   </div>
 
-  <!-- Add Vehicle Modal -->
   <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6">
       <div class="flex items-center justify-between mb-4">
@@ -144,43 +159,43 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="text-xs text-slate-500">Purchase Date</label>
-          <input id="fDate" type="date" class="w-full rounded-xl border-slate-200" />
+          <input id="fDate" type="date" class="input" />
         </div>
         <div>
           <label class="text-xs text-slate-500">Year/Make/Model</label>
-          <input id="fModel" class="w-full rounded-xl border-slate-200" placeholder="2018 Toyota Camry" />
+          <input id="fModel" class="input" placeholder="2018 Toyota Camry" />
         </div>
         <div>
           <label class="text-xs text-slate-500">VIN</label>
-          <input id="fVIN" class="w-full rounded-xl border-slate-200" />
+          <input id="fVIN" class="input" />
         </div>
         <div>
           <label class="text-xs text-slate-500">Mileage</label>
-          <input id="fMileage" type="number" class="w-full rounded-xl border-slate-200" />
+          <input id="fMileage" type="number" class="input" />
         </div>
         <div>
           <label class="text-xs text-slate-500">Selling Dealership</label>
-          <input id="fDealer" class="w-full rounded-xl border-slate-200" />
+          <input id="fDealer" class="input" />
         </div>
         <div>
           <label class="text-xs text-slate-500">Agreed Amount ($)</label>
-          <input id="fAmount" type="number" class="w-full rounded-xl border-slate-200" />
+          <input id="fAmount" type="number" class="input" />
         </div>
         <div>
           <label class="text-xs text-slate-500">Payment Method</label>
-          <select id="fMethod" class="w-full rounded-xl border-slate-200">
+          <select id="fMethod" class="select">
             <option>Wire</option><option>Check</option><option>Cashier Check</option><option>Cash</option>
           </select>
         </div>
         <div>
           <label class="text-xs text-slate-500">Payment Status</label>
-          <select id="fStatus" class="w-full rounded-xl border-slate-200">
+          <select id="fStatus" class="select">
             <option>Pending</option><option>Cleared</option>
           </select>
         </div>
         <div class="md:col-span-2">
           <label class="text-xs text-slate-500">Notes</label>
-          <input id="fNotes" class="w-full rounded-xl border-slate-200" />
+          <input id="fNotes" class="input" />
         </div>
       </div>
       <div class="mt-5 flex justify-end gap-3">
@@ -193,18 +208,12 @@
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
-  // Local storage helpers
   const LS_KEY = "vat_data_v1";
-  const loadData = () => {
-    try { return JSON.parse(localStorage.getItem(LS_KEY)) ?? []; }
-    catch { return []; }
-  };
+  const loadData = () => { try { return JSON.parse(localStorage.getItem(LS_KEY)) ?? []; } catch { return []; } };
   const saveData = (rows) => localStorage.setItem(LS_KEY, JSON.stringify(rows));
 
-  // App state
   let rows = loadData();
 
-  // Render icons
   function mountIcons(){ lucide.createIcons(); }
 
   function formatMoney(n){
@@ -225,8 +234,8 @@
 
   function badge(status){
     const s = (status||"").toLowerCase();
-    const cls = s === "cleared" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700";
-    return `<span class="chip ${cls}">${status||""}</span>`;
+    const cls = s === "cleared" ? "chip chip-emerald" : "chip chip-amber";
+    return `<span class="${cls}">${status||""}</span>`;
   }
 
   function rowMatchesFilters(r){
@@ -267,17 +276,14 @@
 
   function render(){ renderKPIs(); renderTable(); }
 
-  // Import CSV/XLSX
   $("#fileInput").addEventListener("change", (e) => {
     const file = e.target.files[0];
     if(!file) return;
     const ext = file.name.split(".").pop().toLowerCase();
     if(ext === "csv"){
       Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
+        header: true, skipEmptyLines: true,
         complete: (res) => {
-          // Normalize columns
           const norm = res.data.map(obj => normalizeRow(obj));
           rows = rows.concat(norm);
           saveData(rows); render();
@@ -299,7 +305,6 @@
   });
 
   function normalizeRow(obj){
-    // Attempt to map common headers
     const map = {
       "Purchase Date": ["Purchase Date","Date"],
       "Year/Make/Model": ["Year/Make/Model","Model"],
@@ -321,18 +326,15 @@
         }
       }
     }
-    // Format date (YYYY-MM-DD)
     if(out["Purchase Date"]){
       const d = new Date(out["Purchase Date"]);
       if(!isNaN(d)) out["Purchase Date"] = d.toISOString().slice(0,10);
     }
-    // Amount to number
     const num = (out["Agreed Amount ($)"]+"").replace(/[^0-9.\-]/g,"");
     out["Agreed Amount ($)"] = num ? Number(num) : 0;
     return out;
   }
 
-  // Export CSV
   $("#exportBtn").addEventListener("click", () => {
     if(rows.length === 0){ alert("No data to export"); return; }
     const csv = Papa.unparse(rows);
@@ -347,7 +349,6 @@
     URL.revokeObjectURL(url);
   });
 
-  // Add Vehicle modal
   const modal = $("#modal");
   $("#addBtn").addEventListener("click", () => { modal.classList.remove("hidden"); modal.classList.add("flex"); });
   $("#closeModal").addEventListener("click", () => { modal.classList.add("hidden"); modal.classList.remove("flex"); });
@@ -369,7 +370,6 @@
     $$("#modal input, #modal select").forEach(el => el.value = "");
   });
 
-  // Table actions (delete)
   $("#tableBody").addEventListener("click", (e) => {
     const btn = e.target.closest("button[data-action='delete']");
     if(!btn) return;
@@ -382,7 +382,6 @@
     }
   });
 
-  // Filters
   $("#searchInput").addEventListener("input", renderTable);
   $("#statusFilter").addEventListener("change", renderTable);
   $("#methodFilter").addEventListener("change", renderTable);
@@ -392,7 +391,6 @@
     renderTable();
   });
 
-  // Init
   render();
   mountIcons();
 </script>
