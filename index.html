@@ -1,52 +1,47 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vehicle Acquisition Tracker</title>
-  <!-- Tailwind CSS CDN (utilities only) -->
+
+  <!-- Tailwind utilities via CDN (safe for GitHub Pages) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- PapaParse for CSV -->
+  <!-- CSV + XLSX -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.2/papaparse.min.js"></script>
-  <!-- SheetJS for XLSX -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Chart.js for monthly bar chart -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
   <style>
-    .card {
-      background: #ffffff;
-      border-radius: 1rem;
-      box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 1px 3px rgba(0,0,0,.06);
-      border: 1px solid #e2e8f0;
-      padding: 1.5rem;
-    }
-    .btn {
-      display: inline-flex; align-items: center; gap: .5rem;
-      border-radius: .75rem; padding: .5rem 1rem; font-weight: 500;
-      box-shadow: 0 1px 2px rgba(0,0,0,.04); border:none; cursor:pointer;
-    }
-    .btn-primary { background:#4f46e5; color:#fff; }
-    .btn-primary:hover { background:#4338ca; }
-    .btn-green { background:#059669; color:#fff; }
-    .btn-green:hover { background:#047857; }
-    .btn-blue { background:#2563eb; color:#fff; }
-    .btn-blue:hover { background:#1d4ed8; }
-    .btn-purple { background:#7c3aed; color:#fff; }
-    .btn-purple:hover { background:#6d28d9; }
-    .chip { display:inline-flex; align-items:center; padding:.125rem .625rem; border-radius:9999px; font-size:.75rem; font-weight:600; }
-    .chip-emerald { background:#d1fae5; color:#065f46; }
-    .chip-amber { background:#fde68a; color:#92400e; }
-    .input, .select { width:100%; border:1px solid #e2e8f0; border-radius:.75rem; padding:.5rem .75rem; outline:none; }
-    .input:focus, .select:focus { box-shadow: 0 0 0 3px rgba(79,70,229,.25); }
+    /* Simple CSS (no Tailwind @apply) */
+    .card { background:#fff;border-radius:1rem;box-shadow:0 1px 2px rgba(0,0,0,.04),0 1px 3px rgba(0,0,0,.06);border:1px solid #e2e8f0;padding:1.5rem; }
+    .btn { display:inline-flex;align-items:center;gap:.5rem;border-radius:.75rem;padding:.5rem 1rem;font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.04);border:none;cursor:pointer; }
+    .btn-primary{background:#4f46e5;color:#fff}.btn-primary:hover{background:#4338ca}
+    .btn-green{background:#059669;color:#fff}.btn-green:hover{background:#047857}
+    .btn-blue{background:#2563eb;color:#fff}.btn-blue:hover{background:#1d4ed8}
+    .btn-purple{background:#7c3aed;color:#fff}.btn-purple:hover{background:#6d28d9}
+    .chip{display:inline-flex;align-items:center;padding:.125rem .625rem;border-radius:9999px;font-size:.75rem;font-weight:600}
+    .chip-emerald{background:#d1fae5;color:#065f46}.chip-amber{background:#fde68a;color:#92400e}
+    .input,.select{width:100%;border:1px solid #e2e8f0;border-radius:.75rem;padding:.5rem .75rem;outline:none}
+    .input:focus,.select:focus{box-shadow:0 0 0 3px rgba(79,70,229,.25)}
+    .logo-wrap{display:flex;align-items:center;gap:12px}
+    .logo-title{line-height:1}
   </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
   <div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Header with Logo -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div>
-        <h1 class="text-4xl font-black tracking-tight">Vehicle Acquisition Tracker</h1>
-        <p class="text-slate-500">Manage and track your vehicle purchases</p>
+      <div class="logo-wrap">
+        <!-- Place a file named logo.png in your repo root -->
+        <img src="logo.png" alt="CarDome Auto Sales" class="h-14 w-auto object-contain" onerror="this.style.display='none'">
+        <div class="logo-title">
+          <h1 class="text-4xl font-black tracking-tight">Vehicle Acquisition Tracker</h1>
+          <p class="text-slate-500">Manage and track your vehicle purchases</p>
+        </div>
       </div>
       <div class="flex flex-wrap gap-3">
         <label class="btn btn-green cursor-pointer">
@@ -62,7 +57,8 @@
       </div>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-4 mt-6">
+    <!-- KPI Cards -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
       <div class="card flex justify-between items-center">
         <div>
           <p class="text-slate-500">Total Vehicles</p>
@@ -93,9 +89,10 @@
       </div>
     </div>
 
+    <!-- Filters + Table -->
     <div class="card mt-6">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-3">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 w-full md:w-auto">
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-3 w-full md:w-auto">
           <div>
             <label class="text-xs text-slate-500">Search</label>
             <input id="searchInput" class="input" placeholder="VIN, model, dealer..." />
@@ -112,18 +109,28 @@
             <label class="text-xs text-slate-500">Method</label>
             <select id="methodFilter" class="select">
               <option value="">All</option>
-              <option>Wire</option>
-              <option>Check</option>
-              <option>Cashier Check</option>
-              <option>Cash</option>
+              <option>Wire</option><option>Check</option><option>Cashier Check</option><option>Cash</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs text-slate-500">Floorplan</label>
+            <select id="floorFilter" class="select">
+              <option value="">All</option>
+              <option>None</option>
+              <option>NextGear</option>
+              <option>Westlake</option>
+              <option>AFC</option>
+              <option>Other</option>
             </select>
           </div>
           <div>
             <label class="text-xs text-slate-500">Min Amount</label>
             <input id="minAmt" type="number" class="input" placeholder="0" />
           </div>
+          <div class="flex items-end">
+            <button id="clearFilters" class="btn w-full" style="background:#f1f5f9;">Clear</button>
+          </div>
         </div>
-        <button id="clearFilters" class="btn" style="background:#f1f5f9;">Clear</button>
       </div>
 
       <div class="overflow-x-auto mt-4">
@@ -138,6 +145,7 @@
               <th class="px-3 py-2">Amount</th>
               <th class="px-3 py-2">Method</th>
               <th class="px-3 py-2">Status</th>
+              <th class="px-3 py-2">Floorplan</th>
               <th class="px-3 py-2">Notes</th>
               <th class="px-3 py-2"></th>
             </tr>
@@ -146,8 +154,39 @@
         </table>
       </div>
     </div>
+
+    <!-- Monthly Summary -->
+    <div class="grid lg:grid-cols-2 gap-4 mt-6">
+      <!-- Chart -->
+      <div class="card">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-semibold">Monthly Purchases (Bar Chart)</h2>
+          <div class="text-sm text-slate-500">Cars bought per month</div>
+        </div>
+        <canvas id="monthlyChart" class="mt-4"></canvas>
+      </div>
+      <!-- Table -->
+      <div class="card">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-semibold">Monthly Purchases (Table)</h2>
+          <div class="text-sm text-slate-500">Counts by month (YYYY-MM)</div>
+        </div>
+        <div class="overflow-x-auto mt-3">
+          <table class="min-w-full text-sm">
+            <thead class="bg-slate-50">
+              <tr class="text-left">
+                <th class="px-3 py-2">Month</th>
+                <th class="px-3 py-2">Vehicles Bought</th>
+              </tr>
+            </thead>
+            <tbody id="monthlyBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <!-- Add Vehicle Modal -->
   <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6">
       <div class="flex items-center justify-between mb-4">
@@ -193,6 +232,16 @@
             <option>Pending</option><option>Cleared</option>
           </select>
         </div>
+        <div>
+          <label class="text-xs text-slate-500">Floorplan</label>
+          <select id="fFloor" class="select">
+            <option>None</option>
+            <option>NextGear</option>
+            <option>Westlake</option>
+            <option>AFC</option>
+            <option>Other</option>
+          </select>
+        </div>
         <div class="md:col-span-2">
           <label class="text-xs text-slate-500">Notes</label>
           <input id="fNotes" class="input" />
@@ -208,18 +257,17 @@
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
-  const LS_KEY = "vat_data_v1";
+  // Bump storage key (new structure includes Floorplan)
+  const LS_KEY = "vat_data_v3";
   const loadData = () => { try { return JSON.parse(localStorage.getItem(LS_KEY)) ?? []; } catch { return []; } };
   const saveData = (rows) => localStorage.setItem(LS_KEY, JSON.stringify(rows));
 
   let rows = loadData();
+  let monthlyChart; // Chart.js instance
 
   function mountIcons(){ lucide.createIcons(); }
-
-  function formatMoney(n){
-    const x = Number(n || 0);
-    return x.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-  }
+  function formatMoney(n){ const x = Number(n || 0); return x.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:0}); }
+  function ym(dateStr){ const d = new Date(dateStr); return isNaN(d) ? "" : d.toISOString().slice(0,7); }
 
   function renderKPIs(){
     const total = rows.length;
@@ -241,14 +289,53 @@
   function rowMatchesFilters(r){
     const q = $("#searchInput").value.toLowerCase().trim();
     const st = $("#statusFilter").value;
-    const m = $("#methodFilter").value;
+    const m  = $("#methodFilter").value;
+    const fp = $("#floorFilter").value;
     const minAmt = Number($("#minAmt").value || 0);
-    const hay = [r.VIN, r["Year/Make/Model"], r["Selling Dealership"], r.Notes].map(x => (x||"").toLowerCase()).join(" ");
+    const hay = [r.VIN, r["Year/Make/Model"], r["Selling Dealership"], r.Notes, r["Floorplan"]]
+      .map(x => (x||"").toLowerCase()).join(" ");
     if(q && !hay.includes(q)) return false;
     if(st && (r["Payment Status"]||"") !== st) return false;
-    if(m && (r["Payment Method"]||"") !== m) return false;
+    if(m  && (r["Payment Method"]||"") !== m) return false;
+    if(fp && (r["Floorplan"]||"None") !== fp) return false;
     if(Number(r["Agreed Amount ($)"]||0) < minAmt) return false;
     return true;
+  }
+
+  function buildMonthlyMap(){
+    const map = {};
+    rows.forEach(r => { const key = ym(r["Purchase Date"]); if(key){ map[key] = (map[key]||0) + 1; }});
+    return Object.fromEntries(Object.entries(map).sort((a,b)=>a[0].localeCompare(b[0])));
+  }
+
+  function renderMonthlyTable(){
+    const map = buildMonthlyMap();
+    const tb = $("#monthlyBody");
+    tb.innerHTML = "";
+    Object.entries(map).forEach(([month, count])=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td class="px-3 py-2">${month}</td><td class="px-3 py-2 font-semibold">${count}</td>`;
+      tb.appendChild(tr);
+    });
+  }
+
+  function renderMonthlyChart(){
+    const map = buildMonthlyMap();
+    const labels = Object.keys(map);
+    const data = Object.values(map);
+    const ctx = document.getElementById("monthlyChart");
+    if(monthlyChart){ monthlyChart.destroy(); }
+    monthlyChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{ label: "Vehicles", data }]
+      },
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true, ticks: { precision:0 } } }
+      }
+    });
   }
 
   function renderTable(){
@@ -265,6 +352,7 @@
         <td class="px-3 py-2 font-semibold">${formatMoney(r["Agreed Amount ($)"])}</td>
         <td class="px-3 py-2">${r["Payment Method"]||""}</td>
         <td class="px-3 py-2">${badge(r["Payment Status"])}</td>
+        <td class="px-3 py-2">${r["Floorplan"] || "None"}</td>
         <td class="px-3 py-2">${r["Notes"]||""}</td>
         <td class="px-3 py-2 text-right">
           <button class="text-slate-400 hover:text-red-500" data-idx="${idx}" data-action="delete"><i data-lucide="trash-2"></i></button>
@@ -274,30 +362,28 @@
     mountIcons();
   }
 
-  function render(){ renderKPIs(); renderTable(); }
+  function renderAll(){ renderKPIs(); renderTable(); renderMonthlyTable(); renderMonthlyChart(); }
 
+  // Import
   $("#fileInput").addEventListener("change", (e) => {
     const file = e.target.files[0];
     if(!file) return;
     const ext = file.name.split(".").pop().toLowerCase();
+
+    const appendAndRender = (objects) => {
+      const norm = objects.map(obj => normalizeRow(obj));
+      rows = rows.concat(norm);
+      saveData(rows); renderAll();
+    };
+
     if(ext === "csv"){
-      Papa.parse(file, {
-        header: true, skipEmptyLines: true,
-        complete: (res) => {
-          const norm = res.data.map(obj => normalizeRow(obj));
-          rows = rows.concat(norm);
-          saveData(rows); render();
-        }
-      });
+      Papa.parse(file, { header:true, skipEmptyLines:true, complete: (res)=> appendAndRender(res.data) });
     } else {
       const reader = new FileReader();
       reader.onload = (evt) => {
-        const wb = XLSX.read(evt.target.result, { type: "binary" });
+        const wb = XLSX.read(evt.target.result, { type:"binary" });
         const sheet = wb.Sheets[wb.SheetNames[0]];
-        const data = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-        const norm = data.map(obj => normalizeRow(obj));
-        rows = rows.concat(norm);
-        saveData(rows); render();
+        appendAndRender(XLSX.utils.sheet_to_json(sheet, { defval:"" }));
       };
       reader.readAsBinaryString(file);
     }
@@ -314,41 +400,41 @@
       "Agreed Amount ($)": ["Agreed Amount ($)","Amount","Price"],
       "Payment Method": ["Payment Method","Method"],
       "Payment Status": ["Payment Status","Status"],
+      "Floorplan": ["Floorplan","Flooring","Lender"],
       "Notes": ["Notes","Note"]
     };
     const out = {};
     for(const key in map){
       out[key] = "";
       for(const k of map[key]){
-        if(obj[k] !== undefined && obj[k] !== null){
-          out[key] = obj[k];
-          break;
-        }
+        if(obj[k] !== undefined && obj[k] !== null){ out[key] = obj[k]; break; }
       }
     }
+    if(!out["Floorplan"]) out["Floorplan"] = "None";
+    // Date normalize
     if(out["Purchase Date"]){
       const d = new Date(out["Purchase Date"]);
       if(!isNaN(d)) out["Purchase Date"] = d.toISOString().slice(0,10);
     }
+    // Amount normalize
     const num = (out["Agreed Amount ($)"]+"").replace(/[^0-9.\-]/g,"");
     out["Agreed Amount ($)"] = num ? Number(num) : 0;
     return out;
   }
 
+  // Export
   $("#exportBtn").addEventListener("click", () => {
     if(rows.length === 0){ alert("No data to export"); return; }
     const csv = Papa.unparse(rows);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
-    a.download = "vehicle_acquisitions.csv";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    a.href = url; a.download = "vehicle_acquisitions.csv";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
   });
 
+  // Modal add
   const modal = $("#modal");
   $("#addBtn").addEventListener("click", () => { modal.classList.remove("hidden"); modal.classList.add("flex"); });
   $("#closeModal").addEventListener("click", () => { modal.classList.add("hidden"); modal.classList.remove("flex"); });
@@ -362,36 +448,39 @@
       "Agreed Amount ($)": Number($("#fAmount").value || 0),
       "Payment Method": $("#fMethod").value,
       "Payment Status": $("#fStatus").value,
+      "Floorplan": $("#fFloor").value || "None",
       "Notes": $("#fNotes").value
     };
     rows.push(row);
-    saveData(rows); render();
+    saveData(rows); renderAll();
     modal.classList.add("hidden"); modal.classList.remove("flex");
     $$("#modal input, #modal select").forEach(el => el.value = "");
   });
 
+  // Row delete
   $("#tableBody").addEventListener("click", (e) => {
     const btn = e.target.closest("button[data-action='delete']");
     if(!btn) return;
     const idx = Number(btn.dataset.idx);
-    if(Number.isInteger(idx)){
-      if(confirm("Delete this row?")){
-        rows.splice(idx, 1);
-        saveData(rows); render();
-      }
+    if(Number.isInteger(idx) && confirm("Delete this row?")){
+      rows.splice(idx, 1);
+      saveData(rows); renderAll();
     }
   });
 
+  // Filters
   $("#searchInput").addEventListener("input", renderTable);
   $("#statusFilter").addEventListener("change", renderTable);
   $("#methodFilter").addEventListener("change", renderTable);
+  $("#floorFilter").addEventListener("change", renderTable);
   $("#minAmt").addEventListener("input", renderTable);
   $("#clearFilters").addEventListener("click", () => {
-    $("#searchInput").value=""; $("#statusFilter").value=""; $("#methodFilter").value=""; $("#minAmt").value="";
-    renderTable();
+    $("#searchInput").value=""; $("#statusFilter").value=""; $("#methodFilter").value=""; $("#floorFilter").value="";
+    $("#minAmt").value=""; renderTable();
   });
 
-  render();
+  // Initial render
+  renderAll();
   mountIcons();
 </script>
 </body>
