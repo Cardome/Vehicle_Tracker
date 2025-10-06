@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vehicle Acquisition Tracker</title>
 
-  <!-- Tailwind utilities via CDN -->
+  <!-- Tailwind utilities via CDN (safe for GitHub Pages) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -18,18 +18,20 @@
   <style>
     /* Simple CSS (no Tailwind @apply) */
     .card { background:#fff;border-radius:1rem;box-shadow:0 1px 2px rgba(0,0,0,.04),0 1px 3px rgba(0,0,0,.06);border:1px solid #e2e8f0;padding:1.25rem; }
-    .btn { display:inline-flex;align-items:center;gap:.5rem;border-radius:.75rem;padding:.55rem 1rem;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.04);border:none;cursor:pointer; }
+    .btn  { display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:.75rem;padding:.55rem 1rem;font-weight:600;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04); }
     .btn-green{background:#059669;color:#fff}.btn-green:hover{background:#047857}
     .btn-blue{background:#2563eb;color:#fff}.btn-blue:hover{background:#1d4ed8}
     .btn-purple{background:#7c3aed;color:#fff}.btn-purple:hover{background:#6d28d9}
     .chip{display:inline-flex;align-items:center;padding:.125rem .625rem;border-radius:9999px;font-size:.75rem;font-weight:600}
-    .chip-emerald{background:#d1fae5;color:#065f46}.chip-amber{background:#fde68a;color:#92400e}
+    .chip-emerald{background:#d1fae5;color:#065f46}.chip-amber{background:#fde68a;color:#92400e}.chip-indigo{background:#e0e7ff;color:#3730a3}
 
     .input,.select{width:100%;border:1px solid #e2e8f0;border-radius:.75rem;padding:.65rem .875rem .65rem 2.25rem;outline:none;background:#fff}
     .input:focus,.select:focus{box-shadow:0 0 0 3px rgba(79,70,229,.25)}
     .filter-wrap{position:relative}
     .filter-icon{position:absolute;left:.65rem;top:50%;transform:translateY(-50%);color:#94a3b8}
-    .kpi-num{font-variation-settings: "wght" 800}
+    .kpi-num{font-variation-settings:"wght" 800}
+    .linklike{color:#334155}
+    .linklike:hover{color:#0ea5e9}
   </style>
 </head>
 
@@ -38,7 +40,7 @@
     <!-- Header with logo on left -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <!-- ensure logo.png exists in repo root -->
+        <!-- Make sure logo.png exists at repo root -->
         <img src="logo.png" alt="CarDome Auto Sales" class="h-12 w-auto object-contain" onerror="this.style.display='none'">
         <div class="leading-tight">
           <h1 class="text-3xl md:text-4xl font-black tracking-tight">Vehicle Acquisition Tracker</h1>
@@ -90,7 +92,7 @@
     <!-- Filters + Table -->
     <div class="card mt-6">
       <div class="mb-3 text-slate-500 font-medium">Filters</div>
-      <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
         <div class="filter-wrap">
           <i data-lucide="search" class="filter-icon"></i>
           <input id="searchInput" class="input" placeholder="VIN, model, dealer..." />
@@ -98,7 +100,8 @@
         <div class="filter-wrap">
           <i data-lucide="badge-check" class="filter-icon"></i>
           <select id="statusFilter" class="select">
-            <option value="">Status: All</option><option>Cleared</option><option>Pending</option>
+            <option value="">Status: All</option>
+            <option>Pending</option><option>Cleared</option><option>Paid</option>
           </select>
         </div>
         <div class="filter-wrap">
@@ -115,12 +118,10 @@
             <option>None</option><option>NextGear</option><option>Westlake</option><option>AFC</option><option>Other</option>
           </select>
         </div>
-        <div class="filter-wrap">
-          <i data-lucide="calculator" class="filter-icon"></i>
-          <input id="minAmt" type="number" class="input" placeholder="Min Amount (USD)" />
-        </div>
         <div class="flex items-stretch">
-          <button id="clearFilters" class="btn w-full" style="background:#f1f5f9;"><i data-lucide="eraser"></i>Clear</button>
+          <button id="clearFilters" class="btn w-full" style="background:#f1f5f9;">
+            <i data-lucide="eraser"></i>Clear
+          </button>
         </div>
       </div>
 
@@ -175,11 +176,11 @@
     </div>
   </div>
 
-  <!-- Add Vehicle Modal -->
+  <!-- Add / Edit Vehicle Modal -->
   <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold">Add Vehicle</h2>
+        <h2 class="text-xl font-bold" id="modalTitle">Add Vehicle</h2>
         <button id="closeModal" class="text-slate-400 hover:text-slate-600"><i data-lucide="x"></i></button>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -189,147 +190,6 @@
         <div><label class="text-xs text-slate-500">Mileage</label><input id="fMileage" type="number" class="input" /></div>
         <div><label class="text-xs text-slate-500">Selling Dealership</label><input id="fDealer" class="input" /></div>
         <div><label class="text-xs text-slate-500">Agreed Amount ($)</label><input id="fAmount" type="number" class="input" /></div>
-        <div><label class="text-xs text-slate-500">Payment Method</label>
-          <select id="fMethod" class="select"><option>Wire</option><option>Check</option><option>Cashier Check</option><option>Cash</option></select>
-        </div>
-        <div><label class="text-xs text-slate-500">Payment Status</label>
-          <select id="fStatus" class="select"><option>Pending</option><option>Cleared</option></select>
-        </div>
-        <div><label class="text-xs text-slate-500">Floorplan</label>
-          <select id="fFloor" class="select"><option>None</option><option>NextGear</option><option>Westlake</option><option>AFC</option><option>Other</option></select>
-        </div>
-        <div class="md:col-span-2"><label class="text-xs text-slate-500">Notes</label><input id="fNotes" class="input" /></div>
-      </div>
-      <div class="mt-5 flex justify-end gap-3"><button id="saveVehicle" class="btn btn-purple">Save</button></div>
-    </div>
-  </div>
-
-<script>
-  const $ = (sel) => document.querySelector(sel);
-  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
-
-  const LS_KEY = "vat_data_v3"; // includes Floorplan
-  const loadData = () => { try { return JSON.parse(localStorage.getItem(LS_KEY)) ?? []; } catch { return []; } };
-  const saveData = (rows) => localStorage.setItem(LS_KEY, JSON.stringify(rows));
-
-  let rows = loadData();
-  let monthlyChart;
-
-  function mountIcons(){ lucide.createIcons(); }
-  function formatMoney(n){ const x = Number(n || 0); return x.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:0}); }
-  function ym(dateStr){ const d = new Date(dateStr); return isNaN(d) ? "" : d.toISOString().slice(0,7); }
-
-  function renderKPIs(){
-    const total = rows.length;
-    const cleared = rows.filter(r => (r["Payment Status"] || "").toLowerCase() === "cleared").length;
-    const pending = total - cleared;
-    const totalValue = rows.reduce((s,r) => s + Number(r["Agreed Amount ($)"] || 0), 0);
-    $("#kpiTotal").textContent = total; $("#kpiCleared").textContent = cleared;
-    $("#kpiPending").textContent = pending; $("#kpiValue").textContent = formatMoney(totalValue);
-  }
-  function badge(status){ const s = (status||"").toLowerCase(); const cls = s === "cleared" ? "chip chip-emerald" : "chip chip-amber"; return `<span class="${cls}">${status||""}</span>`; }
-  function rowMatchesFilters(r){
-    const q = $("#searchInput").value.toLowerCase().trim();
-    const st = $("#statusFilter").value, m = $("#methodFilter").value, fp = $("#floorFilter").value;
-    const minAmt = Number($("#minAmt").value || 0);
-    const hay = [r.VIN, r["Year/Make/Model"], r["Selling Dealership"], r.Notes, r["Floorplan"]].map(x => (x||"").toLowerCase()).join(" ");
-    if(q && !hay.includes(q)) return false;
-    if(st && (r["Payment Status"]||"") !== st) return false;
-    if(m  && (r["Payment Method"]||"") !== m) return false;
-    if(fp && (r["Floorplan"]||"None") !== fp) return false;
-    if(Number(r["Agreed Amount ($)"]||0) < minAmt) return false;
-    return true;
-  }
-
-  function monthlyMap(){
-    const map = {}; rows.forEach(r => { const k = ym(r["Purchase Date"]); if(k){ map[k]=(map[k]||0)+1; }});
-    return Object.fromEntries(Object.entries(map).sort((a,b)=>a[0].localeCompare(b[0])));
-  }
-  function renderMonthlyTable(){
-    const tb = $("#monthlyBody"); tb.innerHTML = "";
-    Object.entries(monthlyMap()).forEach(([m,c]) => {
-      const tr = document.createElement("tr"); tr.innerHTML = `<td class="px-3 py-2">${m}</td><td class="px-3 py-2 font-semibold">${c}</td>`; tb.appendChild(tr);
-    });
-  }
-  function renderMonthlyChart(){
-    const map = monthlyMap(), labels = Object.keys(map), data = Object.values(map);
-    const ctx = document.getElementById("monthlyChart");
-    if(monthlyChart) monthlyChart.destroy();
-    monthlyChart = new Chart(ctx, { type:"bar", data:{ labels, datasets:[{ label:"Vehicles", data }] }, options:{ responsive:true, scales:{ y:{ beginAtZero:true, ticks:{ precision:0 }}}}});
-  }
-
-  function renderTable(){
-    const tb = $("#tableBody"); tb.innerHTML = "";
-    rows.filter(rowMatchesFilters).forEach((r, idx) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="px-3 py-2 whitespace-nowrap">${r["Purchase Date"]||""}</td>
-        <td class="px-3 py-2">${r["Year/Make/Model"]||""}</td>
-        <td class="px-3 py-2">${r["VIN"]||""}</td>
-        <td class="px-3 py-2">${r["Mileage"]||""}</td>
-        <td class="px-3 py-2">${r["Selling Dealership"]||""}</td>
-        <td class="px-3 py-2 font-semibold">${formatMoney(r["Agreed Amount ($)"])}</td>
-        <td class="px-3 py-2">${r["Payment Method"]||""}</td>
-        <td class="px-3 py-2">${badge(r["Payment Status"])}</td>
-        <td class="px-3 py-2">${r["Floorplan"]||"None"}</td>
-        <td class="px-3 py-2">${r["Notes"]||""}</td>
-        <td class="px-3 py-2 text-right">
-          <button class="text-slate-400 hover:text-red-500" data-idx="${idx}" data-action="delete"><i data-lucide="trash-2"></i></button>
-        </td>`;
-      tb.appendChild(tr);
-    });
-    mountIcons();
-  }
-
-  function renderAll(){ renderKPIs(); renderTable(); renderMonthlyTable(); renderMonthlyChart(); }
-
-  // Import
-  $("#fileInput").addEventListener("change", (e) => {
-    const file = e.target.files[0]; if(!file) return; const ext = file.name.split(".").pop().toLowerCase();
-    const append = (objs)=>{ const norm = objs.map(o=>normalizeRow(o)); rows = rows.concat(norm); saveData(rows); renderAll(); };
-    if(ext==="csv"){ Papa.parse(file,{header:true,skipEmptyLines:true,complete:(res)=>append(res.data)}); }
-    else{ const r=new FileReader(); r.onload=evt=>{ const wb=XLSX.read(evt.target.result,{type:"binary"}); append(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""})); }; r.readAsBinaryString(file); }
-    e.target.value="";
-  });
-
-  function normalizeRow(obj){
-    const map={"Purchase Date":["Purchase Date","Date"],"Year/Make/Model":["Year/Make/Model","Model"],"VIN":["VIN"],"Mileage":["Mileage","Odometer"],"Selling Dealership":["Selling Dealership","Dealer"],"Agreed Amount ($)":["Agreed Amount ($)","Amount","Price"],"Payment Method":["Payment Method","Method"],"Payment Status":["Payment Status","Status"],"Floorplan":["Floorplan","Flooring","Lender"],"Notes":["Notes","Note"]};
-    const out={}; for(const k in map){ out[k]=""; for(const cand of map[k]){ if(obj[cand]!==undefined && obj[cand]!==null){ out[k]=obj[cand]; break; } } }
-    if(!out["Floorplan"]) out["Floorplan"]="None";
-    if(out["Purchase Date"]){ const d=new Date(out["Purchase Date"]); if(!isNaN(d)) out["Purchase Date"]=d.toISOString().slice(0,10); }
-    const num=(out["Agreed Amount ($)"]+"").replace(/[^0-9.\-]/g,""); out["Agreed Amount ($)"]=num?Number(num):0;
-    return out;
-  }
-
-  // Export
-  $("#exportBtn").addEventListener("click", () => {
-    if(rows.length===0){ alert("No data to export"); return; }
-    const csv=Papa.unparse(rows); const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob);
-    const a=document.createElement("a"); a.href=url; a.download="vehicle_acquisitions.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-  });
-
-  // Modal add
-  const modal = $("#modal");
-  $("#addBtn").addEventListener("click", () => { modal.classList.remove("hidden"); modal.classList.add("flex"); });
-  $("#closeModal").addEventListener("click", () => { modal.classList.add("hidden"); modal.classList.remove("flex"); });
-  $("#saveVehicle").addEventListener("click", () => {
-    const row={"Purchase Date":$("#fDate").value,"Year/Make/Model":$("#fModel").value,"VIN":$("#fVIN").value,"Mileage":$("#fMileage").value,"Selling Dealership":$("#fDealer").value,"Agreed Amount ($)":Number($("#fAmount").value||0),"Payment Method":$("#fMethod").value,"Payment Status":$("#fStatus").value,"Floorplan":$("#fFloor").value||"None","Notes":$("#fNotes").value};
-    rows.push(row); saveData(rows); renderAll(); modal.classList.add("hidden"); modal.classList.remove("flex"); $$("#modal input, #modal select").forEach(el=>el.value="");
-  });
-
-  // Table actions
-  $("#tableBody").addEventListener("click",(e)=>{ const btn=e.target.closest("button[data-action='delete']"); if(!btn) return; const idx=Number(btn.dataset.idx); if(Number.isInteger(idx) && confirm("Delete this row?")){ rows.splice(idx,1); saveData(rows); renderAll(); }});
-
-  // Filters
-  $("#searchInput").addEventListener("input", renderTable);
-  $("#statusFilter").addEventListener("change", renderTable);
-  $("#methodFilter").addEventListener("change", renderTable);
-  $("#floorFilter").addEventListener("change", renderTable);
-  $("#minAmt").addEventListener("input", renderTable);
-  $("#clearFilters").addEventListener("click",()=>{ $("#searchInput").value=""; $("#statusFilter").value=""; $("#methodFilter").value=""; $("#floorFilter").value=""; $("#minAmt").value=""; renderTable(); });
-
-  // Initial render
-  renderAll(); mountIcons();
-</script>
-</body>
-</html>
+        <div>
+          <label class="text-xs text-slate-500">Payment Method</label>
+          <select id="fMethod" class="select"><option>Wire</option><option>Check</option><option>Cashier Check</
