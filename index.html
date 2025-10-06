@@ -16,31 +16,29 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <style>
-    /* Simple CSS (no Tailwind @apply) */
     .card { background:#fff;border-radius:1rem;box-shadow:0 1px 2px rgba(0,0,0,.04),0 1px 3px rgba(0,0,0,.06);border:1px solid #e2e8f0;padding:1.25rem; }
     .btn  { display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:.75rem;padding:.55rem 1rem;font-weight:600;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04); }
     .btn-green{background:#059669;color:#fff}.btn-green:hover{background:#047857}
     .btn-blue{background:#2563eb;color:#fff}.btn-blue:hover{background:#1d4ed8}
     .btn-purple{background:#7c3aed;color:#fff}.btn-purple:hover{background:#6d28d9}
+
     .chip{display:inline-flex;align-items:center;padding:.125rem .625rem;border-radius:9999px;font-size:.75rem;font-weight:600}
-    .chip-emerald{background:#d1fae5;color:#065f46}.chip-amber{background:#fde68a;color:#92400e}.chip-indigo{background:#e0e7ff;color:#3730a3}
+    .chip-emerald{background:#d1fae5;color:#065f46}
+    .chip-amber{background:#fde68a;color:#92400e}
+    .chip-indigo{background:#e0e7ff;color:#3730a3}
 
     .input,.select{width:100%;border:1px solid #e2e8f0;border-radius:.75rem;padding:.65rem .875rem .65rem 2.25rem;outline:none;background:#fff}
     .input:focus,.select:focus{box-shadow:0 0 0 3px rgba(79,70,229,.25)}
     .filter-wrap{position:relative}
     .filter-icon{position:absolute;left:.65rem;top:50%;transform:translateY(-50%);color:#94a3b8}
-    .kpi-num{font-variation-settings:"wght" 800}
-    .linklike{color:#334155}
-    .linklike:hover{color:#0ea5e9}
   </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900">
   <div class="max-w-6xl mx-auto px-4 py-6">
-    <!-- Header with logo on left -->
+    <!-- Header -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <!-- Make sure logo.png exists at repo root -->
         <img src="logo.png" alt="CarDome Auto Sales" class="h-12 w-auto object-contain" onerror="this.style.display='none'">
         <div class="leading-tight">
           <h1 class="text-3xl md:text-4xl font-black tracking-tight">Vehicle Acquisition Tracker</h1>
@@ -60,31 +58,19 @@
     <!-- KPIs -->
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
       <div class="card flex justify-between items-center">
-        <div>
-          <p class="text-slate-500">Total Vehicles</p>
-          <div id="kpiTotal" class="text-4xl kpi-num mt-1">0</div>
-        </div>
+        <div><p class="text-slate-500">Total Vehicles</p><div id="kpiTotal" class="text-4xl font-extrabold mt-1">0</div></div>
         <i data-lucide="car" class="w-8 h-8 text-blue-500"></i>
       </div>
       <div class="card flex justify-between items-center">
-        <div>
-          <p class="text-slate-500">Cleared</p>
-          <div id="kpiCleared" class="text-4xl kpi-num mt-1">0</div>
-        </div>
+        <div><p class="text-slate-500">Cleared</p><div id="kpiCleared" class="text-4xl font-extrabold mt-1">0</div></div>
         <i data-lucide="trending-up" class="w-8 h-8 text-emerald-500"></i>
       </div>
       <div class="card flex justify-between items-center">
-        <div>
-          <p class="text-slate-500">Pending</p>
-          <div id="kpiPending" class="text-4xl kpi-num mt-1">0</div>
-        </div>
+        <div><p class="text-slate-500">Pending</p><div id="kpiPending" class="text-4xl font-extrabold mt-1">0</div></div>
         <i data-lucide="calendar" class="w-8 h-8 text-amber-500"></i>
       </div>
       <div class="card flex justify-between items-center">
-        <div>
-          <p class="text-slate-500">Total Value</p>
-          <div id="kpiValue" class="text-4xl kpi-num mt-1">$0</div>
-        </div>
+        <div><p class="text-slate-500">Total Value</p><div id="kpiValue" class="text-4xl font-extrabold mt-1">$0</div></div>
         <i data-lucide="dollar-sign" class="w-8 h-8 text-purple-500"></i>
       </div>
     </div>
@@ -119,9 +105,7 @@
           </select>
         </div>
         <div class="flex items-stretch">
-          <button id="clearFilters" class="btn w-full" style="background:#f1f5f9;">
-            <i data-lucide="eraser"></i>Clear
-          </button>
+          <button id="clearFilters" class="btn w-full" style="background:#f1f5f9;"><i data-lucide="eraser"></i>Clear</button>
         </div>
       </div>
 
@@ -164,10 +148,7 @@
         <div class="overflow-x-auto mt-3">
           <table class="min-w-full text-sm">
             <thead class="bg-slate-50">
-              <tr class="text-left">
-                <th class="px-3 py-2">Month</th>
-                <th class="px-3 py-2">Vehicles Bought</th>
-              </tr>
+              <tr class="text-left"><th class="px-3 py-2">Month</th><th class="px-3 py-2">Vehicles Bought</th></tr>
             </thead>
             <tbody id="monthlyBody" class="divide-y divide-slate-100"></tbody>
           </table>
@@ -190,6 +171,232 @@
         <div><label class="text-xs text-slate-500">Mileage</label><input id="fMileage" type="number" class="input" /></div>
         <div><label class="text-xs text-slate-500">Selling Dealership</label><input id="fDealer" class="input" /></div>
         <div><label class="text-xs text-slate-500">Agreed Amount ($)</label><input id="fAmount" type="number" class="input" /></div>
-        <div>
-          <label class="text-xs text-slate-500">Payment Method</label>
-          <select id="fMethod" class="select"><option>Wire</option><option>Check</option><option>Cashier Check</
+        <div><label class="text-xs text-slate-500">Payment Method</label>
+          <select id="fMethod" class="select"><option>Wire</option><option>Check</option><option>Cashier Check</option><option>Cash</option></select>
+        </div>
+        <div><label class="text-xs text-slate-500">Payment Status</label>
+          <select id="fStatus" class="select"><option>Pending</option><option>Cleared</option><option>Paid</option></select>
+        </div>
+        <div><label class="text-xs text-slate-500">Floorplan</label>
+          <select id="fFloor" class="select"><option>None</option><option>NextGear</option><option>Westlake</option><option>AFC</option><option>Other</option></select>
+        </div>
+        <div class="md:col-span-2"><label class="text-xs text-slate-500">Notes</label><input id="fNotes" class="input" /></div>
+      </div>
+      <div class="mt-5 flex justify-end gap-3">
+        <button id="saveVehicle" class="btn btn-purple">Save</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Helpers
+  const $  = (s) => document.querySelector(s);
+  const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+  const LS_KEY = "vat_data_v3"; // storage key
+  const loadData = () => { try { return JSON.parse(localStorage.getItem(LS_KEY)) ?? []; } catch { return []; } };
+  const saveData = (rows) => localStorage.setItem(LS_KEY, JSON.stringify(rows));
+
+  let rows = loadData();
+  let monthlyChart;
+
+  function mountIcons(){ lucide.createIcons(); }
+  function fmtMoney(n){ const x = Number(n||0); return x.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:0}); }
+  function ym(dstr){ const d=new Date(dstr); return isNaN(d)?"":d.toISOString().slice(0,7); }
+
+  // VIN -> auto-fill Year/Make/Model
+  $("#fVIN").addEventListener("blur", async () => {
+    const vin = ($("#fVIN").value||"").trim();
+    if(vin.length < 11) return;
+    try{
+      const url = `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${encodeURIComponent(vin)}?format=json`;
+      const res = await fetch(url); const data = await res.json(); const r=(data?.Results||[])[0]||{};
+      const y=r.ModelYear||"", mk=r.Make||"", md=r.Model||"";
+      if(y||mk||md) $("#fModel").value = [y,mk,md].filter(Boolean).join(" ");
+    }catch(e){ console.warn("VIN decode failed", e); }
+  });
+
+  // KPIs
+  function renderKPIs(){
+    const total = rows.length;
+    const cleared = rows.filter(r => (r["Payment Status"]||"").toLowerCase()==="cleared").length;
+    const pending = rows.filter(r => (r["Payment Status"]||"").toLowerCase()==="pending").length;
+    const totalValue = rows.reduce((s,r)=>s+Number(r["Agreed Amount ($)"]||0),0);
+    $("#kpiTotal").textContent=total;
+    $("#kpiCleared").textContent=cleared;
+    $("#kpiPending").textContent=pending;
+    $("#kpiValue").textContent=fmtMoney(totalValue);
+  }
+
+  // Status badge
+  function pill(status){
+    const s=(status||"").toLowerCase();
+    const cls = s==="cleared" ? "chip chip-emerald" : s==="paid" ? "chip chip-indigo" : "chip chip-amber";
+    return `<span class="${cls}">${status||""}</span>`;
+  }
+
+  // Filters
+  function rowMatches(r){
+    const q  = $("#searchInput").value.toLowerCase().trim();
+    const st = $("#statusFilter").value;
+    const m  = $("#methodFilter").value;
+    const fl = $("#floorFilter").value;
+    const hay=[r.VIN,r["Year/Make/Model"],r["Selling Dealership"],r.Notes,r["Floorplan"]].map(x=>(x||"").toLowerCase()).join(" ");
+    if(q && !hay.includes(q)) return false;
+    if(st && (r["Payment Status"]||"") !== st) return false;
+    if(m  && (r["Payment Method"]||"") !== m) return false;
+    if(fl && (r["Floorplan"]||"None") !== fl) return false;
+    return true;
+  }
+
+  // Monthly
+  function monthMap(){
+    const m={}; rows.forEach(r=>{ const k=ym(r["Purchase Date"]); if(k){ m[k]=(m[k]||0)+1; }});
+    return Object.fromEntries(Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0])));
+  }
+  function renderMonthlyTable(){
+    const tb = $("#monthlyBody"); tb.innerHTML="";
+    Object.entries(monthMap()).forEach(([k,c])=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML=`<td class="px-3 py-2">${k}</td><td class="px-3 py-2 font-semibold">${c}</td>`;
+      tb.appendChild(tr);
+    });
+  }
+  function renderMonthlyChart(){
+    const map=monthMap(), labels=Object.keys(map), data=Object.values(map);
+    const ctx=$("#monthlyChart");
+    if(monthlyChart) monthlyChart.destroy();
+    monthlyChart=new Chart(ctx,{type:"bar",data:{labels,datasets:[{label:"Vehicles",data}]},options:{responsive:true,scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+  }
+
+  // Table
+  const STATUSES = ["Pending","Cleared","Paid"];
+  function renderTable(){
+    const tb=$("#tableBody"); tb.innerHTML="";
+    rows.filter(rowMatches).forEach((r,idx)=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
+        <td class="px-3 py-2 whitespace-nowrap">${r["Purchase Date"]||""}</td>
+        <td class="px-3 py-2">${r["Year/Make/Model"]||""}</td>
+        <td class="px-3 py-2">${r["VIN"]||""}</td>
+        <td class="px-3 py-2">${r["Mileage"]||""}</td>
+        <td class="px-3 py-2">${r["Selling Dealership"]||""}</td>
+        <td class="px-3 py-2 font-semibold">${fmtMoney(r["Agreed Amount ($)"])}</td>
+        <td class="px-3 py-2">${r["Payment Method"]||""}</td>
+        <td class="px-3 py-2">
+          <div class="relative inline-block">
+            <button class="inline-flex items-center gap-1">${pill(r["Payment Status"]||"")}<i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i></button>
+            <select data-idx="${idx}" class="absolute left-0 top-0 opacity-0 w-full h-full cursor-pointer" title="Change status">
+              ${STATUSES.map(s=>`<option ${s===(r["Payment Status"]||"")?"selected":""}>${s}</option>`).join("")}
+            </select>
+          </div>
+        </td>
+        <td class="px-3 py-2">${r["Floorplan"]||"None"}</td>
+        <td class="px-3 py-2">${r["Notes"]||""}</td>
+        <td class="px-3 py-2 text-right">
+          <button class="text-slate-400 hover:text-blue-600" data-idx="${idx}" data-action="edit" title="Edit"><i data-lucide="pencil"></i></button>
+          <button class="text-slate-400 hover:text-red-500 ml-2" data-idx="${idx}" data-action="delete" title="Delete"><i data-lucide="trash-2"></i></button>
+        </td>`;
+      tb.appendChild(tr);
+    });
+
+    // status change
+    tb.querySelectorAll("select[title='Change status']").forEach(sel=>{
+      sel.addEventListener("change",(e)=>{
+        const i=Number(e.target.getAttribute("data-idx")); const val=e.target.value;
+        if(!Number.isInteger(i)) return;
+        rows[i]["Payment Status"]=val; saveData(rows); renderTable(); renderKPIs();
+      });
+    });
+
+    mountIcons();
+  }
+
+  function renderAll(){ renderKPIs(); renderTable(); renderMonthlyTable(); renderMonthlyChart(); }
+
+  // Import
+  $("#fileInput").addEventListener("change",(e)=>{
+    const f=e.target.files[0]; if(!f) return; const ext=f.name.split(".").pop().toLowerCase();
+    const append=(objs)=>{ const norm=objs.map(normalizeRow); rows=rows.concat(norm); saveData(rows); renderAll(); };
+    if(ext==="csv"){ Papa.parse(f,{header:true,skipEmptyLines:true,complete:(res)=>append(res.data)}); }
+    else{ const r=new FileReader(); r.onload=(evt)=>{ const wb=XLSX.read(evt.target.result,{type:"binary"}); append(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""})); }; r.readAsBinaryString(f); }
+    e.target.value="";
+  });
+
+  function normalizeRow(obj){
+    const map={
+      "Purchase Date":["Purchase Date","Date"],
+      "Year/Make/Model":["Year/Make/Model","Model"],
+      "VIN":["VIN"],
+      "Mileage":["Mileage","Odometer"],
+      "Selling Dealership":["Selling Dealership","Dealer"],
+      "Agreed Amount ($)":["Agreed Amount ($)","Amount","Price"],
+      "Payment Method":["Payment Method","Method"],
+      "Payment Status":["Payment Status","Status"],
+      "Floorplan":["Floorplan","Flooring","Lender"],
+      "Notes":["Notes","Note"]
+    };
+    const out={}; for(const k in map){ out[k]=""; for(const c of map[k]){ if(obj[c]!==undefined && obj[c]!==null){ out[k]=obj[c]; break; } } }
+    if(!out["Floorplan"]) out["Floorplan"]="None";
+    if(out["Purchase Date"]){ const d=new Date(out["Purchase Date"]); if(!isNaN(d)) out["Purchase Date"]=d.toISOString().slice(0,10); }
+    const num=(out["Agreed Amount ($)"]+"").replace(/[^0-9.\-]/g,""); out["Agreed Amount ($)"]=num?Number(num):0;
+    return out;
+  }
+
+  // Export
+  $("#exportBtn").addEventListener("click",()=>{
+    if(rows.length===0){ alert("No data to export"); return; }
+    const csv=Papa.unparse(rows); const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob);
+    const a=document.createElement("a"); a.href=url; a.download="vehicle_acquisitions.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  });
+
+  // Modal open/close
+  const modal=$("#modal");
+  $("#addBtn").addEventListener("click",()=>{ $("#modalTitle").textContent="Add Vehicle"; $$("#modal input, #modal select").forEach(el=>el.value=""); modal.classList.remove("hidden"); modal.classList.add("flex"); });
+  $("#closeModal").addEventListener("click",()=>{ modal.classList.add("hidden"); modal.classList.remove("flex"); });
+
+  // Save (create or update)
+  let editingIndex = null;
+  $("#saveVehicle").addEventListener("click",()=>{
+    const row={
+      "Purchase Date":$("#fDate").value,
+      "Year/Make/Model":$("#fModel").value,
+      "VIN":$("#fVIN").value,
+      "Mileage":$("#fMileage").value,
+      "Selling Dealership":$("#fDealer").value,
+      "Agreed Amount ($)":Number($("#fAmount").value||0),
+      "Payment Method":$("#fMethod").value,
+      "Payment Status":$("#fStatus").value,
+      "Floorplan":$("#fFloor").value||"None",
+      "Notes":$("#fNotes").value
+    };
+    if(editingIndex===null){ rows.push(row); } else { rows[editingIndex]=row; editingIndex=null; }
+    saveData(rows); renderAll(); modal.classList.add("hidden"); modal.classList.remove("flex");
+  });
+
+  // Table actions (edit/delete)
+  $("#tableBody").addEventListener("click",(e)=>{
+    const btn=e.target.closest("button[data-action]"); if(!btn) return;
+    const idx=Number(btn.dataset.idx); const act=btn.dataset.action;
+    if(act==="delete"){ if(confirm("Delete this row?")){ rows.splice(idx,1); saveData(rows); renderAll(); } }
+    if(act==="edit"){
+      const r=rows[idx]; editingIndex=idx; $("#modalTitle").textContent="Edit Vehicle";
+      $("#fDate").value=r["Purchase Date"]||""; $("#fModel").value=r["Year/Make/Model"]||""; $("#fVIN").value=r["VIN"]||"";
+      $("#fMileage").value=r["Mileage"]||""; $("#fDealer").value=r["Selling Dealership"]||""; $("#fAmount").value=r["Agreed Amount ($)"]||"";
+      $("#fMethod").value=r["Payment Method"]||""; $("#fStatus").value=r["Payment Status"]||"Pending"; $("#fFloor").value=r["Floorplan"]||"None"; $("#fNotes").value=r["Notes"]||"";
+      modal.classList.remove("hidden"); modal.classList.add("flex");
+    }
+  });
+
+  // Filter interactions
+  $("#searchInput").addEventListener("input", renderTable);
+  $("#statusFilter").addEventListener("change", renderTable);
+  $("#methodFilter").addEventListener("change", renderTable);
+  $("#floorFilter").addEventListener("change", renderTable);
+  $("#clearFilters").addEventListener("click",()=>{ $("#searchInput").value=""; $("#statusFilter").value=""; $("#methodFilter").value=""; $("#floorFilter").value=""; renderTable(); });
+
+  // Initial render
+  renderAll(); mountIcons();
+</script>
+</body>
+</html>
