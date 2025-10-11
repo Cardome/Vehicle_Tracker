@@ -1,41 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Vehicle Acquisition Tracker</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vehicle Acquisition Tracker</title>
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- CSV + XLSX -->
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.2/papaparse.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- CSV + XLSX -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.2/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-  <style>
-    /* ===== UI polish (same vibe you have) ===== */
-    .card{background:rgba(255,255,255,.9);backdrop-filter:saturate(150%) blur(6px);border:1px solid rgba(226,232,240,.85);border-radius:1rem;box-shadow:0 8px 28px rgba(2,6,23,.06);padding:1.2rem}
-    .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:.8rem;padding:.6rem 1rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(15,23,42,.06)}
-    .btn-green{background:#059669;color:#fff}.btn-green:hover{background:#047857}
-    .btn-blue{background:#2563eb;color:#fff}.btn-blue:hover{background:#1d4ed8}
-    .btn-purple{background:#7c3aed;color:#fff}.btn-purple:hover{background:#6d28d9}
-    .chip{display:inline-flex;align-items:center;padding:.125rem .6rem;border-radius:9999px;font-size:.75rem;font-weight:700}
-    .chip-amber{background:#fde68a;color:#92400e}.chip-emerald{background:#d1fae5;color:#065f46}.chip-indigo{background:#e0e7ff;color:#3730a3}
-    .input,.select{width:100%;border:1px solid #e2e8f0;border-radius:.9rem;padding:.7rem .9rem .7rem 2.35rem;background:#fff;outline:none}
-    .input:focus,.select:focus{box-shadow:0 0 0 3px rgba(79,70,229,.25)}
-    .filter-wrap{position:relative}.filter-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:#94a3b8}
-    tr:hover td{background:rgba(241,245,249,.55)}.fade-in{animation:fade .25s ease both}@keyframes fade{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:none}}
-    .placeholder-cell{color:#94a3b8}
-    .hero{background:linear-gradient(120deg,#eef2ff 0%,#e6fffb 45%,#ecfeff 80%);border-bottom:1px solid rgba(226,232,240,.8)}
-    .sticky-header{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#f8fafc 60%,rgba(248,250,252,0))}
-    .toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;border-radius:.75rem;padding:.7rem 1rem;box-shadow:0 8px 30px rgba(0,0,0,.2);opacity:0;transform:translateY(10px);transition:all .2s}
-    .toast.show{opacity:1;transform:none}
-    .modal-root{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.4);padding:1rem}
-    .modal-root.flex{display:flex}.modal-panel{background:#fff;border-radius:1rem;box-shadow:0 20px 60px rgba(0,0,0,.25);width:100%;max-width:48rem;max-height:85vh;overflow:auto;padding:1.5rem}
-  </style>
+<style>
+  /* ===== Background (put the .avif next to this file) ===== */
+  body::before{
+    content:"";
+    position:fixed; inset:0; z-index:-2;
+    background:
+      linear-gradient(180deg, rgba(248,250,252,.92), rgba(248,250,252,.92)),
+      url("1150-HP-Jeep-Grand-Cherokee-Trackhawk.avif") center/cover no-repeat fixed;
+    filter:saturate(110%) contrast(102%);
+  }
+  /* ===== UI polish ===== */
+  .card{background:rgba(255,255,255,.92);backdrop-filter:saturate(150%) blur(6px);border:1px solid rgba(226,232,240,.85);border-radius:1rem;box-shadow:0 8px 28px rgba(2,6,23,.06);padding:1.2rem}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:.8rem;padding:.6rem 1rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(15,23,42,.06)}
+  .btn-green{background:#059669;color:#fff}.btn-green:hover{background:#047857}
+  .btn-blue{background:#2563eb;color:#fff}.btn-blue:hover{background:#1d4ed8}
+  .btn-purple{background:#7c3aed;color:#fff}.btn-purple:hover{background:#6d28d9}
+  .chip{display:inline-flex;align-items:center;padding:.125rem .6rem;border-radius:9999px;font-size:.75rem;font-weight:700}
+  .chip-amber{background:#fde68a;color:#92400e}.chip-emerald{background:#d1fae5;color:#065f46}.chip-indigo{background:#e0e7ff;color:#3730a3}
+  .input,.select{width:100%;border:1px solid #e2e8f0;border-radius:.9rem;padding:.7rem .9rem .7rem 2.35rem;background:#fff;outline:none}
+  .input:focus,.select:focus{box-shadow:0 0 0 3px rgba(79,70,229,.25)}
+  .filter-wrap{position:relative}.filter-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:#94a3b8}
+  tr:hover td{background:rgba(241,245,249,.55)}.fade-in{animation:fade .25s ease both}@keyframes fade{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:none}}
+  .placeholder-cell{color:#94a3b8}
+  .hero{background:linear-gradient(120deg,#eef2ff 0%,#e6fffb 45%,#ecfeff 80%);border-bottom:1px solid rgba(226,232,240,.8)}
+  .sticky-header{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#f8fafc 60%,rgba(248,250,252,0))}
+  .toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;border-radius:.75rem;padding:.7rem 1rem;box-shadow:0 8px 30px rgba(0,0,0,.2);opacity:0;transform:translateY(10px);transition:all .2s}
+  .toast.show{opacity:1;transform:none}
+  .modal-root{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.4);padding:1rem}
+  .modal-root.flex{display:flex}.modal-panel{background:#fff;border-radius:1rem;box-shadow:0 20px 60px rgba(0,0,0,.25);width:100%;max-width:48rem;max-height:85vh;overflow:auto;padding:1.5rem}
+</style>
 </head>
 
 <body class="bg-slate-50 text-slate-900">
@@ -76,8 +85,6 @@
     <!-- Filters + Table -->
     <div class="card mt-6 fade-in">
       <div class="mb-3 text-slate-500 font-medium">Filters</div>
-
-      <!-- NOTE: increased to 7 cols to fit Dealer filter -->
       <div class="grid grid-cols-1 md:grid-cols-7 gap-3">
         <div class="filter-wrap"><i data-lucide="search" class="filter-icon"></i><input id="searchInput" class="input" placeholder="Search VIN, model, dealer, notes..."></div>
         <div class="filter-wrap"><i data-lucide="badge-check" class="filter-icon"></i>
@@ -92,7 +99,6 @@
         <div class="filter-wrap"><i data-lucide="file-text" class="filter-icon"></i>
           <select id="titleFilter" class="select"><option value="">Title: All</option><option>Not Received</option><option>Received</option><option>Branded</option></select>
         </div>
-        <!-- Dealer filter -->
         <div class="filter-wrap"><i data-lucide="store" class="filter-icon"></i>
           <select id="dealerFilter" class="select"><option value="">Dealer: All</option></select>
         </div>
@@ -103,21 +109,11 @@
         <table class="min-w-full text-sm">
           <thead class="bg-slate-50">
             <tr class="text-left">
-              <th class="px-3 py-2">Date</th>
-              <th class="px-3 py-2">Year/Make/Model</th>
-              <th class="px-3 py-2">VIN</th>
-              <th class="px-3 py-2">Body Style</th>
-              <th class="px-3 py-2">Mileage</th>
-              <th class="px-3 py-2">Dealer</th>
-              <th class="px-3 py-2">MSRP</th>
-              <th class="px-3 py-2">Amount</th>
-              <th class="px-3 py-2">Method</th>
-              <th class="px-3 py-2">Status</th>
-              <th class="px-3 py-2">Title</th>
-              <th class="px-3 py-2">Title Recv</th>
-              <th class="px-3 py-2">Floorplan</th>
-              <th class="px-3 py-2">Notes</th>
-              <th class="px-3 py-2"></th>
+              <th class="px-3 py-2">Date</th><th class="px-3 py-2">Year/Make/Model</th><th class="px-3 py-2">VIN</th>
+              <th class="px-3 py-2">Body Style</th><th class="px-3 py-2">Mileage</th><th class="px-3 py-2">Dealer</th>
+              <th class="px-3 py-2">MSRP</th><th class="px-3 py-2">Amount</th><th class="px-3 py-2">Method</th>
+              <th class="px-3 py-2">Status</th><th class="px-3 py-2">Title</th><th class="px-3 py-2">Title Recv</th>
+              <th class="px-3 py-2">Floorplan</th><th class="px-3 py-2">Notes</th><th class="px-3 py-2"></th>
             </tr>
           </thead>
           <tbody id="tableBody" class="divide-y divide-slate-100"></tbody>
@@ -135,12 +131,7 @@
       <div class="overflow-x-auto mt-3">
         <table class="min-w-full text-sm">
           <thead class="bg-slate-50">
-            <tr class="text-left">
-              <th class="px-3 py-2">Dealer</th>
-              <th class="px-3 py-2">Vehicles</th>
-              <th class="px-3 py-2">Total Amount</th>
-              <th class="px-3 py-2">Avg / Vehicle</th>
-            </tr>
+            <tr class="text-left"><th class="px-3 py-2">Dealer</th><th class="px-3 py-2">Vehicles</th><th class="px-3 py-2">Total Amount</th><th class="px-3 py-2">Avg / Vehicle</th></tr>
           </thead>
           <tbody id="dealerBody" class="divide-y divide-slate-100"></tbody>
         </table>
@@ -150,22 +141,13 @@
     <!-- Monthly Summary -->
     <div class="grid lg:grid-cols-2 gap-4 mt-6">
       <div class="card fade-in">
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-semibold">Monthly Purchases (Bar Chart)</h2>
-          <div class="text-sm text-slate-500">Cars bought per month</div>
-        </div>
+        <div class="flex items-center justify-between"><h2 class="text-lg font-semibold">Monthly Purchases (Bar Chart)</h2><div class="text-sm text-slate-500">Cars bought per month</div></div>
         <canvas id="monthlyChart" class="mt-4"></canvas>
       </div>
       <div class="card fade-in">
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-semibold">Monthly Purchases (Table)</h2>
-          <div class="text-sm text-slate-500">Counts by month (YYYY-MM)</div>
-        </div>
+        <div class="flex items-center justify-between"><h2 class="text-lg font-semibold">Monthly Purchases (Table)</h2><div class="text-sm text-slate-500">Counts by month (YYYY-MM)</div></div>
         <div class="overflow-x-auto mt-3">
-          <table class="min-w-full text-sm">
-            <thead class="bg-slate-50"><tr class="text-left"><th class="px-3 py-2">Month</th><th class="px-3 py-2">Vehicles Bought</th></tr></thead>
-            <tbody id="monthlyBody" class="divide-y divide-slate-100"></tbody>
-          </table>
+          <table class="min-w-full text-sm"><thead class="bg-slate-50"><tr class="text-left"><th class="px-3 py-2">Month</th><th class="px-3 py-2">Vehicles Bought</th></tr></thead><tbody id="monthlyBody" class="divide-y divide-slate-100"></tbody></table>
         </div>
       </div>
     </div>
@@ -177,58 +159,32 @@
   <!-- Modal -->
   <div id="modal" class="modal-root">
     <div class="modal-panel">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold" id="modalTitle">Add Vehicle</h2>
-        <button id="closeModal" class="text-slate-400 hover:text-slate-600"><i data-lucide="x"></i></button>
-      </div>
-
+      <div class="flex items-center justify-between mb-4"><h2 class="text-xl font-bold" id="modalTitle">Add Vehicle</h2><button id="closeModal" class="text-slate-400 hover:text-slate-600"><i data-lucide="x"></i></button></div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div><label class="text-xs text-slate-500">Purchase Date</label><input id="fDate" type="date" class="input"></div>
         <div><label class="text-xs text-slate-500">Year/Make/Model</label><input id="fModel" class="input" placeholder="2018 Toyota Camry"></div>
-
         <div><label class="text-xs text-slate-500">VIN</label><input id="fVIN" class="input"></div>
         <div><label class="text-xs text-slate-500">Body Style</label><input id="fBody" class="input" placeholder="SUV / Sedan / Pickup"></div>
-
         <div><label class="text-xs text-slate-500">Mileage</label><input id="fMileage" type="number" class="input"></div>
         <div><label class="text-xs text-slate-500">MSRP ($)</label><input id="fMSRP" type="number" class="input"></div>
-
         <div><label class="text-xs text-slate-500">Selling Dealership</label><input id="fDealer" class="input"></div>
         <div><label class="text-xs text-slate-500">Agreed Amount ($)</label><input id="fAmount" type="number" class="input"></div>
-
-        <div>
-          <label class="text-xs text-slate-500">Payment Method</label>
-          <select id="fMethod" class="select"><option>Wire</option><option>Check</option><option>Cashier Check</option><option>Cash</option></select>
-        </div>
-        <div>
-          <label class="text-xs text-slate-500">Payment Status</label>
-          <select id="fStatus" class="select"><option>Pending</option><option>Cleared</option><option>Paid</option></select>
-        </div>
-
-        <div>
-          <label class="text-xs text-slate-500">Title Status</label>
-          <select id="fTitleStatus" class="select"><option>Not Received</option><option>Received</option><option>Branded</option></select>
-        </div>
+        <div><label class="text-xs text-slate-500">Payment Method</label><select id="fMethod" class="select"><option>Wire</option><option>Check</option><option>Cashier Check</option><option>Cash</option></select></div>
+        <div><label class="text-xs text-slate-500">Payment Status</label><select id="fStatus" class="select"><option>Pending</option><option>Cleared</option><option>Paid</option></select></div>
+        <div><label class="text-xs text-slate-500">Title Status</label><select id="fTitleStatus" class="select"><option>Not Received</option><option>Received</option><option>Branded</option></select></div>
         <div><label class="text-xs text-slate-500">Title Received Date</label><input id="fTitleDate" type="date" class="input"></div>
-
-        <div>
-          <label class="text-xs text-slate-500">Floorplan</label>
-          <select id="fFloor" class="select"><option>None</option><option>NextGear</option><option>Westlake</option><option>AFC</option><option>Other</option></select>
-        </div>
+        <div><label class="text-xs text-slate-500">Floorplan</label><select id="fFloor" class="select"><option>None</option><option>NextGear</option><option>Westlake</option><option>AFC</option><option>Other</option></select></div>
         <div class="md:col-span-2"><label class="text-xs text-slate-500">Notes</label><input id="fNotes" class="input"></div>
       </div>
-
-      <div class="mt-5 flex justify-end gap-3">
-        <button id="saveVehicle" class="btn btn-purple">Save</button>
-      </div>
+      <div class="mt-5 flex justify-end gap-3"><button id="saveVehicle" class="btn btn-purple">Save</button></div>
     </div>
   </div>
 
 <script>
   /* ===== Helpers & State ===== */
-  const $  = (s)=>document.querySelector(s);
-  const $$ = (s)=>Array.from(document.querySelectorAll(s));
-  const LS_KEY="vat_data_v4"; const FILTERS_KEY="vat_filters_v3";
-  let rows = loadData(), monthlyChart, editingIndex=null;
+  const $=(s)=>document.querySelector(s), $$=(s)=>Array.from(document.querySelectorAll(s));
+  const LS_KEY="vat_data_v4", FILTERS_KEY="vat_filters_v3";
+  let rows=loadData(), monthlyChart, editingIndex=null;
 
   function loadData(){ try{return JSON.parse(localStorage.getItem(LS_KEY))||[]}catch{return[]} }
   function saveData(v){ localStorage.setItem(LS_KEY, JSON.stringify(v)); }
@@ -239,11 +195,10 @@
   /* ===== Modal ===== */
   function openModal(){ $("#modal").classList.add("flex"); document.body.style.overflow="hidden"; }
   function closeModal(){ $("#modal").classList.remove("flex"); document.body.style.overflow=""; }
-  $("#closeModal").onclick=closeModal;
-  $("#modal").addEventListener("click",(e)=>{ if(e.target.id==="modal") closeModal(); });
+  $("#closeModal").onclick=closeModal; $("#modal").addEventListener("click",(e)=>{ if(e.target.id==="modal") closeModal(); });
   document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeModal(); });
 
-  /* ===== VIN autofill (NHTSA) ===== */
+  /* ===== VIN autofill ===== */
   $("#fVIN").addEventListener("blur", async ()=>{
     const vin=($("#fVIN").value||"").trim(); if(vin.length<11) return;
     try{
@@ -256,19 +211,8 @@
   });
 
   /* ===== Filters ===== */
-  function saveFilters(){
-    const f={ q:$("#searchInput").value, st:$("#statusFilter").value, m:$("#methodFilter").value,
-              fl:$("#floorFilter").value, tt:$("#titleFilter").value, dl:$("#dealerFilter").value };
-    localStorage.setItem(FILTERS_KEY, JSON.stringify(f));
-  }
-  function loadFilters(){
-    try{ const f=JSON.parse(localStorage.getItem(FILTERS_KEY)); if(!f) return;
-      $("#searchInput").value=f.q||""; $("#statusFilter").value=f.st||"";
-      $("#methodFilter").value=f.m||""; $("#floorFilter").value=f.fl||"";
-      $("#titleFilter").value=f.tt||""; $("#dealerFilter").value=f.dl||"";
-    }catch{}
-  }
-
+  function saveFilters(){ const f={q:$("#searchInput").value,st:$("#statusFilter").value,m:$("#methodFilter").value,fl:$("#floorFilter").value,tt:$("#titleFilter").value,dl:$("#dealerFilter").value}; localStorage.setItem(FILTERS_KEY, JSON.stringify(f)); }
+  function loadFilters(){ try{const f=JSON.parse(localStorage.getItem(FILTERS_KEY)); if(!f) return; $("#searchInput").value=f.q||""; $("#statusFilter").value=f.st||""; $("#methodFilter").value=f.m||""; $("#floorFilter").value=f.fl||""; $("#titleFilter").value=f.tt||""; $("#dealerFilter").value=f.dl||"";}catch{} }
   function rowMatches(r){
     const q=$("#searchInput").value.toLowerCase().trim();
     const st=$("#statusFilter").value, m=$("#methodFilter").value, fl=$("#floorFilter").value, tt=$("#titleFilter").value, dl=$("#dealerFilter").value;
@@ -282,57 +226,33 @@
     return true;
   }
 
-  /* ===== Dealer Filter Options & Summary ===== */
+  /* ===== Dealer options & summary ===== */
   function getDealers(list){ const s=new Set(); list.forEach(r=>{ const d=(r["Selling Dealership"]||"").trim(); if(d) s.add(d); }); return Array.from(s).sort((a,b)=>a.localeCompare(b)); }
-  function renderDealerOptions(){
-    const sel=$("#dealerFilter"); const current=sel.value;
-    const dealers=getDealers(rows);
-    sel.innerHTML=`<option value="">Dealer: All</option>`+dealers.map(d=>`<option ${d===current?"selected":""}>${d}</option>`).join("");
-  }
+  function renderDealerOptions(){ const sel=$("#dealerFilter"), current=sel.value; const dealers=getDealers(rows); sel.innerHTML=`<option value="">Dealer: All</option>`+dealers.map(d=>`<option ${d===current?"selected":""}>${d}</option>`).join(""); }
   function computeDealerSummary(){
     const filtered=rows.filter(rowMatches); const map={};
-    filtered.forEach(r=>{ const d=(r["Selling Dealership"]||"").trim()||"—"; const amt=Number(r["Agreed Amount ($)"]||0);
-      if(!map[d]) map[d]={count:0,total:0}; map[d].count++; map[d].total+=amt; });
-    return Object.entries(map).map(([dealer,v])=>({dealer,...v,avg:v.count? v.total/v.count:0})).sort((a,b)=>b.total-a.total);
+    filtered.forEach(r=>{ const d=(r["Selling Dealership"]||"").trim()||"—"; const amt=Number(r["Agreed Amount ($)"]||0); if(!map[d]) map[d]={count:0,total:0}; map[d].count++; map[d].total+=amt; });
+    return Object.entries(map).map(([dealer,v])=>({dealer,...v,avg:v.count?v.total/v.count:0})).sort((a,b)=>b.total-a.total);
   }
   function renderDealerSummary(){
-    const tb=$("#dealerBody"); tb.innerHTML="";
-    const arr=computeDealerSummary();
+    const tb=$("#dealerBody"); tb.innerHTML=""; const arr=computeDealerSummary();
     if(arr.length===0){ tb.innerHTML=`<tr><td class="px-3 py-3 text-slate-400" colspan="4">No data.</td></tr>`; return; }
-    let gc=0, gt=0;
-    arr.forEach(s=>{ const tr=document.createElement("tr");
-      tr.innerHTML=`<td class="px-3 py-2">${s.dealer}</td>
-                    <td class="px-3 py-2 font-semibold">${s.count}</td>
-                    <td class="px-3 py-2 font-semibold">${fmtMoney(s.total)}</td>
-                    <td class="px-3 py-2">${fmtMoney(s.avg)}</td>`;
-      tb.appendChild(tr); gc+=s.count; gt+=s.total; });
-    const tr=document.createElement("tr");
-    tr.innerHTML=`<td class="px-3 py-2 font-bold">Total</td>
-                  <td class="px-3 py-2 font-bold">${gc}</td>
-                  <td class="px-3 py-2 font-bold">${fmtMoney(gt)}</td>
-                  <td class="px-3 py-2">—</td>`;
-    tb.appendChild(tr);
+    let gc=0,gt=0; arr.forEach(s=>{ const tr=document.createElement("tr"); tr.innerHTML=`<td class="px-3 py-2">${s.dealer}</td><td class="px-3 py-2 font-semibold">${s.count}</td><td class="px-3 py-2 font-semibold">${fmtMoney(s.total)}</td><td class="px-3 py-2">${fmtMoney(s.avg)}</td>`; tb.appendChild(tr); gc+=s.count; gt+=s.total; });
+    const tr=document.createElement("tr"); tr.innerHTML=`<td class="px-3 py-2 font-bold">Total</td><td class="px-3 py-2 font-bold">${gc}</td><td class="px-3 py-2 font-bold">${fmtMoney(gt)}</td><td class="px-3 py-2">—</td>`; tb.appendChild(tr);
   }
 
   /* ===== Monthly ===== */
   function monthMap(){ const m={}; rows.forEach(r=>{ const k=ym(r["Purchase Date"]); if(k) m[k]=(m[k]||0)+1; }); return Object.fromEntries(Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0]))); }
   function renderMonthlyTable(){ const tb=$("#monthlyBody"); tb.innerHTML=""; Object.entries(monthMap()).forEach(([k,c])=>{ const tr=document.createElement("tr"); tr.innerHTML=`<td class="px-3 py-2">${k}</td><td class="px-3 py-2 font-semibold">${c}</td>`; tb.appendChild(tr); }); }
-  function renderMonthlyChart(){ const map=monthMap(), labels=Object.keys(map), data=Object.values(map);
-    const ctx=$("#monthlyChart"); if(monthlyChart) monthlyChart.destroy();
-    monthlyChart=new Chart(ctx,{type:"bar",data:{labels,datasets:[{label:"Vehicles",data}]},options:{responsive:true,animation:{duration:500,easing:"easeOutQuart"},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}}); }
+  function renderMonthlyChart(){ const map=monthMap(), labels=Object.keys(map), data=Object.values(map); const ctx=$("#monthlyChart"); if(monthlyChart) monthlyChart.destroy(); monthlyChart=new Chart(ctx,{type:"bar",data:{labels,datasets:[{label:"Vehicles",data}]},options:{responsive:true,scales:{y:{beginAtZero:true,ticks:{precision:0}}}}}); }
 
   /* ===== Table ===== */
   const STATUSES=["Pending","Cleared","Paid"];
   function pill(v){ const s=(v||"").toLowerCase(); const cls=s==="cleared"?"chip chip-emerald":s==="paid"?"chip chip-indigo":"chip chip-amber"; return `<span class="${cls}">${v||"—"}</span>`; }
   function val(v){ return v ? v : `<span class="placeholder-cell">—</span>`; }
-
   function renderTable(){
-    const tb=$("#tableBody"); tb.innerHTML="";
-    const visible=rows.filter(rowMatches);
-    $("#emptyState").classList.toggle("hidden",visible.length>0);
-    visible.forEach(r=>{
-      const idx=rows.indexOf(r);
-      const tr=document.createElement("tr"); tr.className="fade-in";
+    const tb=$("#tableBody"); tb.innerHTML=""; const visible=rows.filter(rowMatches); $("#emptyState").classList.toggle("hidden",visible.length>0);
+    visible.forEach(r=>{ const idx=rows.indexOf(r); const tr=document.createElement("tr"); tr.className="fade-in";
       tr.innerHTML=`
         <td class="px-3 py-2">${val(r["Purchase Date"])}</td>
         <td class="px-3 py-2">${val(r["Year/Make/Model"])}</td>
@@ -343,79 +263,100 @@
         <td class="px-3 py-2">${val(r["MSRP ($)"]?fmtMoney(r["MSRP ($)"]):"")}</td>
         <td class="px-3 py-2 font-semibold">${fmtMoney(r["Agreed Amount ($)"])}</td>
         <td class="px-3 py-2">${val(r["Payment Method"])}</td>
-        <td class="px-3 py-2">
-          <div class="relative inline-block">
-            <button class="inline-flex items-center gap-1">${pill(r["Payment Status"])}</button>
-            <select data-idx="${idx}" class="absolute left-0 top-0 opacity-0 w-full h-full cursor-pointer" title="Change status">
-              ${STATUSES.map(s=>`<option ${s===(r["Payment Status"]||"")?"selected":""}>${s}</option>`).join("")}
-            </select>
-          </div>
-        </td>
+        <td class="px-3 py-2"><div class="relative inline-block"><button class="inline-flex items-center gap-1">${pill(r["Payment Status"])}</button><select data-idx="${idx}" class="absolute left-0 top-0 opacity-0 w-full h-full cursor-pointer" title="Change status">${STATUSES.map(s=>`<option ${s===(r["Payment Status"]||"")?"selected":""}>${s}</option>`).join("")}</select></div></td>
         <td class="px-3 py-2">${val(r["Title Status"])}</td>
         <td class="px-3 py-2">${val(r["Title Received Date"])}</td>
         <td class="px-3 py-2">${val(r["Floorplan"]||"None")}</td>
         <td class="px-3 py-2">${val(r["Notes"])}</td>
-        <td class="px-3 py-2 text-right">
-          <button class="text-slate-400 hover:text-blue-600" data-idx="${idx}" data-action="edit" title="Edit"><i data-lucide="pencil"></i></button>
-          <button class="text-slate-400 hover:text-red-500 ml-2" data-idx="${idx}" data-action="delete" title="Delete"><i data-lucide="trash-2"></i></button>
-        </td>`;
+        <td class="px-3 py-2 text-right"><button class="text-slate-400 hover:text-blue-600" data-idx="${idx}" data-action="edit" title="Edit"><i data-lucide="pencil"></i></button><button class="text-slate-400 hover:text-red-500 ml-2" data-idx="${idx}" data-action="delete" title="Delete"><i data-lucide="trash-2"></i></button></td>`;
       tb.appendChild(tr);
     });
-
     tb.querySelectorAll("select[title='Change status']").forEach(sel=>{
       sel.addEventListener("change",(e)=>{ const i=Number(e.target.dataset.idx); rows[i]["Payment Status"]=e.target.value; saveData(rows); renderTable(); renderKPIs(); });
     });
-
     lucide.createIcons();
   }
-
   function renderKPIs(){
-    const total=rows.length;
-    const cleared=rows.filter(r=>(r["Payment Status"]||"").toLowerCase()==="cleared").length;
-    const pending=rows.filter(r=>(r["Payment Status"]||"").toLowerCase()==="pending").length;
-    const totalValue=rows.reduce((s,r)=>s+Number(r["Agreed Amount ($)"]||0),0);
+    const total=rows.length, cleared=rows.filter(r=>(r["Payment Status"]||"").toLowerCase()==="cleared").length, pending=rows.filter(r=>(r["Payment Status"]||"").toLowerCase()==="pending").length, totalValue=rows.reduce((s,r)=>s+Number(r["Agreed Amount ($)"]||0),0);
     $("#kpiTotal").textContent=total; $("#kpiCleared").textContent=cleared; $("#kpiPending").textContent=pending; $("#kpiValue").textContent=fmtMoney(totalValue);
   }
-
   function renderAll(){ renderKPIs(); renderDealerOptions(); renderTable(); renderDealerSummary(); renderMonthlyTable(); renderMonthlyChart(); }
 
-  /* ===== Import / Export (with blank-row filter) ===== */
+  /* ===== Import / Export (robust) ===== */
+  // Excel serial date -> ISO YYYY-MM-DD
+  function excelSerialToISO(v){
+    if(v===undefined || v===null || v==="") return "";
+    if(typeof v==="number"){ const epoch = new Date(Date.UTC(1899,11,30)); const ms=v*86400000; const d=new Date(epoch.getTime()+ms); return isNaN(d)? "": d.toISOString().slice(0,10); }
+    const d=new Date(v); return isNaN(d)? "": d.toISOString().slice(0,10);
+  }
   function normalizeRow(obj){
     const map={
-      "Purchase Date":["Purchase Date","Date"],
-      "Year/Make/Model":["Year/Make/Model","Model"],
-      "VIN":["VIN"], "Body Style":["Body Style","BodyClass","Series"],
-      "Mileage":["Mileage","Odometer"],
-      "Selling Dealership":["Selling Dealership","Dealer"],
+      "Purchase Date":["Purchase Date","Date","Purchased","Buy Date"],
+      "Year/Make/Model":["Year/Make/Model","Model","Year Make Model"],
+      "VIN":["VIN","Vin","vin"],
+      "Body Style":["Body Style","BodyClass","Series","Trim"],
+      "Mileage":["Mileage","Odometer","Miles"],
+      "Selling Dealership":["Selling Dealership","Dealer","Selling Dealer","Vendor"],
       "MSRP ($)":["MSRP ($)","MSRP"],
-      "Agreed Amount ($)":["Agreed Amount ($)","Amount","Price"],
+      "Agreed Amount ($)":["Agreed Amount ($)","Amount","Price","Agreed"],
       "Payment Method":["Payment Method","Method"],
       "Payment Status":["Payment Status","Status"],
       "Title Status":["Title Status","Title"],
       "Title Received Date":["Title Received Date","Title Date"],
       "Floorplan":["Floorplan","Flooring","Lender"],
-      "Notes":["Notes","Note"]
+      "Notes":["Notes","Note","Comment"]
     };
     const out={};
     for(const k in map){ out[k]=""; for(const c of map[k]){ if(obj[c]!==undefined && obj[c]!==null){ out[k]=obj[c]; break; } } }
     if(!out["Floorplan"]) out["Floorplan"]="None"; if(!out["Title Status"]) out["Title Status"]="Not Received";
-    ["Purchase Date","Title Received Date"].forEach(key=>{ if(out[key]){ const d=new Date(out[key]); if(!isNaN(d)) out[key]=d.toISOString().slice(0,10); }});
-    const fix=v=>{ const n=(v+"").replace(/[^0-9.\-]/g,""); return n?Number(n):0; };
+
+    // Dates
+    out["Purchase Date"]=excelSerialToISO(out["Purchase Date"]);
+    out["Title Received Date"]=excelSerialToISO(out["Title Received Date"]);
+
+    // Numbers
+    const fix=(v)=>{ if(typeof v==="number") return v; const n=(v+"").replace(/[^0-9.\-]/g,""); return n?Number(n):0; };
     out["Agreed Amount ($)"]=fix(out["Agreed Amount ($)"]); out["MSRP ($)"]=fix(out["MSRP ($)"]);
+    out["Mileage"]=fix(out["Mileage"])||"";
+
+    // Trim strings
+    ["Year/Make/Model","VIN","Body Style","Selling Dealership","Payment Method","Payment Status","Title Status","Floorplan","Notes"].forEach(k=>{ if(out[k]!=="" && out[k]!==null) out[k]=(out[k]+"").trim(); });
+
     return out;
   }
   function isRowEmpty(r){
-    const hasVIN=(r["VIN"]||"").trim()!==""; const hasModel=(r["Year/Make/Model"]||"").trim()!=="";
-    const hasDealer=(r["Selling Dealership"]||"").trim()!==""; const hasNotes=(r["Notes"]||"").trim()!=="";
-    const hasAny=hasVIN||hasModel||hasDealer||hasNotes; const hasAmt=Number(r["Agreed Amount ($)"]||0)>0 || Number(r["MSRP ($)"]||0)>0;
-    return !(hasAny || hasAmt);
+    const hasVIN=(r["VIN"]||"").trim()!=="";
+    const hasModel=(r["Year/Make/Model"]||"").trim()!=="";
+    const hasDealer=(r["Selling Dealership"]||"").trim()!=="";
+    const hasAmount=Number(r["Agreed Amount ($)"]||0)>0;
+    const hasAny = hasVIN||hasModel||hasDealer||hasAmount||(r["Notes"]||"").trim()!=="";
+    return !hasAny;
   }
 
   $("#fileInput").addEventListener("change",(e)=>{
     const f=e.target.files[0]; if(!f) return; const ext=f.name.split(".").pop().toLowerCase();
-    const append=(objs)=>{ const norm=objs.map(normalizeRow).filter(r=>!isRowEmpty(r)); rows=rows.concat(norm); saveData(rows); renderAll(); toast(`Imported ${norm.length} row(s).`); };
-    if(ext==="csv"){ Papa.parse(f,{header:true,skipEmptyLines:true,complete:(res)=>append(res.data)}); }
-    else{ const r=new FileReader(); r.onload=(evt)=>{ const wb=XLSX.read(evt.target.result,{type:"binary"}); append(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""})); }; r.readAsBinaryString(f); }
+
+    const append=(arr)=>{
+      const norm=arr.map(normalizeRow).filter(r=>!isRowEmpty(r));
+      rows=rows.concat(norm); saveData(rows); renderAll(); toast(`Imported ${norm.length} row(s).`);
+    };
+
+    if(ext==="csv"){
+      Papa.parse(f,{header:true,skipEmptyLines:true,complete:(res)=>append(res.data)});
+    } else {
+      const r=new FileReader();
+      r.onload=(evt)=>{
+        const wb=XLSX.read(evt.target.result,{type:"binary"});
+        let all=[];
+        wb.SheetNames.forEach(name=>{
+          const sheet=wb.Sheets[name];
+          const data=XLSX.utils.sheet_to_json(sheet,{defval:""});
+          all=all.concat(data);
+        });
+        append(all);
+      };
+      r.readAsBinaryString(f);
+    }
     e.target.value="";
   });
 
@@ -424,15 +365,8 @@
     const csv=headers.join(",")+"\n"; const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob);
     const a=document.createElement("a"); a.href=url; a.download="vehicle_template.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
   });
-  $("#exportBtn").addEventListener("click",()=>{
-    if(rows.length===0){ alert("No data to export"); return; }
-    const csv=Papa.unparse(rows); const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob);
-    const a=document.createElement("a"); a.href=url; a.download="vehicle_acquisitions.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-  });
-  $("#exportJson").addEventListener("click",()=>{
-    const blob=new Blob([JSON.stringify(rows,null,2)],{type:"application/json"}); const url=URL.createObjectURL(blob);
-    const a=document.createElement("a"); a.href=url; a.download="vehicle_acquisitions_backup.json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-  });
+  $("#exportBtn").addEventListener("click",()=>{ if(rows.length===0){ alert("No data to export"); return; } const csv=Papa.unparse(rows); const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="vehicle_acquisitions.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); });
+  $("#exportJson").addEventListener("click",()=>{ const blob=new Blob([JSON.stringify(rows,null,2)],{type:"application/json"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="vehicle_acquisitions_backup.json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); });
 
   /* ===== Add/Edit/Delete ===== */
   $("#addBtn").addEventListener("click",()=>{ editingIndex=null; $("#modalTitle").textContent="Add Vehicle"; $$("#modal input, #modal select").forEach(el=>el.value=""); $("#fTitleStatus").value="Not Received"; $("#fFloor").value="None"; $("#fStatus").value="Pending"; openModal(); });
@@ -444,28 +378,25 @@
     if(editingIndex===null){ rows.push(row); toast("Vehicle added ✓"); } else { rows[editingIndex]=row; editingIndex=null; toast("Vehicle updated ✓"); }
     saveData(rows); renderAll(); closeModal();
   });
-
   $("#tableBody").addEventListener("click",(e)=>{
-    const btn=e.target.closest("button[data-action]"); if(!btn) return; const idx=Number(btn.dataset.idx); const act=btn.dataset.action;
-    if(act==="delete"){ const removed=rows.splice(idx,1)[0]; saveData(rows); renderAll(); toast("Deleted."); }
+    const btn=e.target.closest("button[data-action]"); if(!btn) return; const idx=Number(btn.dataset.idx), act=btn.dataset.action;
+    if(act==="delete"){ rows.splice(idx,1); saveData(rows); renderAll(); toast("Deleted."); }
     if(act==="edit"){ const r=rows[idx]; editingIndex=idx; $("#modalTitle").textContent="Edit Vehicle";
-      $("#fDate").value=r["Purchase Date"]||""; $("#fModel").value=r["Year/Make/Model"]||""; $("#fVIN").value=r["VIN"]||"";
-      $("#fBody").value=r["Body Style"]||""; $("#fMileage").value=r["Mileage"]||""; $("#fDealer").value=r["Selling Dealership"]||"";
-      $("#fMSRP").value=r["MSRP ($)"]||""; $("#fAmount").value=r["Agreed Amount ($)"]||"";
-      $("#fMethod").value=r["Payment Method"]||""; $("#fStatus").value=r["Payment Status"]||"Pending";
+      $("#fDate").value=r["Purchase Date"]||""; $("#fModel").value=r["Year/Make/Model"]||""; $("#fVIN").value=r["VIN"]||""; $("#fBody").value=r["Body Style"]||"";
+      $("#fMileage").value=r["Mileage"]||""; $("#fDealer").value=r["Selling Dealership"]||""; $("#fMSRP").value=r["MSRP ($)"]||"";
+      $("#fAmount").value=r["Agreed Amount ($)"]||""; $("#fMethod").value=r["Payment Method"]||""; $("#fStatus").value=r["Payment Status"]||"Pending";
       $("#fTitleStatus").value=r["Title Status"]||"Not Received"; $("#fTitleDate").value=r["Title Received Date"]||"";
       $("#fFloor").value=r["Floorplan"]||"None"; $("#fNotes").value=r["Notes"]||""; openModal();
     }
   });
 
-  /* ===== Filter events ===== */
+  /* ===== Filter events & init ===== */
   ["searchInput","statusFilter","methodFilter","floorFilter","titleFilter","dealerFilter"].forEach(id=>{
     $("#"+id).addEventListener("input", ()=>{ saveFilters(); renderTable(); renderDealerSummary(); });
     $("#"+id).addEventListener("change",()=>{ saveFilters(); renderTable(); renderDealerSummary(); });
   });
   $("#clearFilters").addEventListener("click",()=>{ $("#searchInput").value=""; $("#statusFilter").value=""; $("#methodFilter").value=""; $("#floorFilter").value=""; $("#titleFilter").value=""; $("#dealerFilter").value=""; saveFilters(); renderAll(); });
 
-  /* ===== Init ===== */
   loadFilters();
   renderAll();
   lucide.createIcons();
