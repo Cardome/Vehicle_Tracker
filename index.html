@@ -16,39 +16,39 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <style>
-  /* ===== Background (stronger & more visible) ===== */
+  /* ===== Background (visible) ===== */
   body::before{
     content:"";
     position:fixed; inset:0; z-index:-2;
     background:
-      linear-gradient(180deg, rgba(248,250,252,.85), rgba(248,250,252,.85)),
+      linear-gradient(180deg, rgba(248,250,252,.82), rgba(248,250,252,.82)),
       url("1150-HP-Jeep-Grand-Cherokee-Trackhawk.avif") center/cover no-repeat fixed;
-    filter:saturate(130%) contrast(110%) brightness(105%);
+    filter:saturate(135%) contrast(112%) brightness(107%);
   }
-  /* Decorative corner art */
   body::after{
     content:"";
     position:fixed;
-    right:-20px; bottom:-20px;
-    width:650px; height:420px;
+    right:-12px; bottom:-14px;
+    width:720px; height:460px;
     background:url("1150-HP-Jeep-Grand-Cherokee-Trackhawk.avif") bottom right/contain no-repeat;
-    opacity:.35;
+    opacity:.42;
     pointer-events:none;
     z-index:-1;
-    filter:saturate(130%) contrast(110%);
+    filter:saturate(135%) contrast(112%);
   }
   @media (max-width: 768px){
     body::after{
-      width:360px; height:240px; right:-10px; bottom:-10px; opacity:.45;
+      width:380px; height:250px; right:-6px; bottom:-8px; opacity:.5;
     }
   }
 
   /* ===== UI polish ===== */
-  .card{background:rgba(255,255,255,.92);backdrop-filter:saturate(150%) blur(6px);border:1px solid rgba(226,232,240,.85);border-radius:1rem;box-shadow:0 8px 28px rgba(2,6,23,.06);padding:1.2rem}
+  .card{background:rgba(255,255,255,.94);backdrop-filter:saturate(150%) blur(6px);border:1px solid rgba(226,232,240,.85);border-radius:1rem;box-shadow:0 8px 28px rgba(2,6,23,.06);padding:1.2rem}
   .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:.8rem;padding:.6rem 1rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(15,23,42,.06)}
   .btn-green{background:#059669;color:#fff}.btn-green:hover{background:#047857}
   .btn-blue{background:#2563eb;color:#fff}.btn-blue:hover{background:#1d4ed8}
   .btn-purple{background:#7c3aed;color:#fff}.btn-purple:hover{background:#6d28d9}
+  .btn-amber{background:#d97706;color:#fff}.btn-amber:hover{background:#b45309}
   .chip{display:inline-flex;align-items:center;padding:.125rem .6rem;border-radius:9999px;font-size:.75rem;font-weight:700}
   .chip-amber{background:#fde68a;color:#92400e}.chip-emerald{background:#d1fae5;color:#065f46}.chip-indigo{background:#e0e7ff;color:#3730a3}
   .input,.select{width:100%;border:1px solid #e2e8f0;border-radius:.9rem;padding:.7rem .9rem .7rem 2.35rem;background:#fff;outline:none}
@@ -63,6 +63,9 @@
   .modal-root{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.4);padding:1rem}
   .modal-root.flex{display:flex}.modal-panel{background:#fff;border-radius:1rem;box-shadow:0 20px 60px rgba(0,0,0,.25);width:100%;max-width:48rem;max-height:85vh;overflow:auto;padding:1.5rem}
   .hint{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;border-radius:.75rem;padding:.5rem .75rem;font-size:.85rem}
+  .dz{border:2px dashed #cbd5e1;border-radius:1rem;padding:1rem;display:flex;gap:.75rem;align-items:center;justify-content:center;background:#f8fafc}
+  .dz.drag{background:#eef2ff;border-color:#a5b4fc}
+  .diag{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;background:#0b1220;color:#e5e7eb;border-radius:.75rem;padding:.75rem;white-space:pre-wrap}
 </style>
 </head>
 
@@ -86,6 +89,7 @@
           <button id="exportBtn" class="btn btn-blue"><i data-lucide="download"></i><span class="hidden sm:inline">Export CSV</span></button>
           <button id="exportJson" class="btn btn-blue"><i data-lucide="braces"></i><span class="hidden sm:inline">Backup JSON</span></button>
           <button id="addBtn" class="btn btn-purple"><i data-lucide="plus"></i><span class="hidden sm:inline">Add Vehicle</span></button>
+          <button id="loadDemo" class="btn btn-amber"><i data-lucide="rocket"></i><span class="hidden sm:inline">Load Demo Data</span></button>
         </div>
       </div>
     </div>
@@ -93,9 +97,21 @@
 
   <!-- Content -->
   <div class="max-w-6xl mx-auto px-4 py-6">
-    <!-- Optional hint if wrong file extension -->
+
     <div id="extHint" class="hint mb-4 hidden">
-      âš ï¸ Your file appears to be named <b>.tsx</b>. Please rename it to <b>.xlsx</b> or export a CSV, then click <b>Import CSV/XLSX</b> again.
+      âš ï¸ Your file seems to be <b>.tsx</b> or not a spreadsheet. Please use <b>.xlsx</b> or <b>.csv</b>.
+    </div>
+
+    <!-- Drag & Drop -->
+    <div id="drop" class="dz mb-4">
+      <i data-lucide="file-input" class="w-5 h-5 text-slate-500"></i>
+      <span class="text-slate-600">Drag a <b>.xlsx</b> or <b>.csv</b> here, or use â€œImport CSV/XLSXâ€.</span>
+    </div>
+
+    <!-- Diagnostics -->
+    <div class="card mb-4">
+      <div class="text-sm text-slate-500 mb-2">Import diagnostics</div>
+      <div id="diag" class="diag text-xs">Ready.</div>
     </div>
 
     <!-- KPIs -->
@@ -207,8 +223,9 @@
 <script>
   /* ===== Helpers & State ===== */
   const $=(s)=>document.querySelector(s), $$=(s)=>Array.from(document.querySelectorAll(s));
-  const LS_KEY="vat_data_v5", FILTERS_KEY="vat_filters_v3";
+  const LS_KEY="vat_data_v6", FILTERS_KEY="vat_filters_v3";
   let rows=loadData(), monthlyChart, editingIndex=null;
+  const diag=(msg)=>{ const el=$("#diag"); el.textContent=String(msg); console.log("[diag]", msg); }
 
   function loadData(){ try{return JSON.parse(localStorage.getItem(LS_KEY))||[]}catch{return[]} }
   function saveData(v){ localStorage.setItem(LS_KEY, JSON.stringify(v)); }
@@ -306,7 +323,7 @@
   }
   function renderAll(){ renderKPIs(); renderDealerOptions(); renderTable(); renderDealerSummary(); renderMonthlyTable(); renderMonthlyChart(); }
 
-  /* ===== Import / Export (robust, ArrayBuffer) ===== */
+  /* ===== Import (drag+drop and input) ===== */
   function excelSerialToISO(v){
     if(v===undefined || v===null || v==="") return "";
     if(typeof v==="number"){ const epoch = new Date(Date.UTC(1899,11,30)); const ms=v*86400000; const d=new Date(epoch.getTime()+ms); return isNaN(d)? "": d.toISOString().slice(0,10); }
@@ -348,24 +365,23 @@
     const hasAny = hasVIN||hasModel||hasDealer||hasAmount||(r["Notes"]||"").trim()!=="";
     return !hasAny;
   }
-
   function handleParsedRows(allRows){
+    diag(`Parsed rows (raw): ${allRows.length}`);
     const norm=allRows.map(normalizeRow).filter(r=>!isRowEmpty(r));
-    if(norm.length===0){ toast("No rows found. Ensure headers exist on the first row."); return; }
-    rows=rows.concat(norm); saveData(rows); renderAll(); toast(`Imported ${norm.length} row(s).`);
+    if(norm.length===0){ toast("No rows found. Ensure headers exist on the first row."); diag("Normalized rows = 0. Check headers."); return; }
+    rows=rows.concat(norm); saveData(rows); renderAll(); toast(`Imported ${norm.length} row(s).`); diag(`Imported ${norm.length} rows. Total now ${rows.length}.`);
   }
 
-  $("#fileInput").addEventListener("change",(e)=>{
-    const f=e.target.files[0]; if(!f) return;
-    const name=f.name.toLowerCase();
-    if(name.endsWith(".tsx")){ // common mistake seen in your repo
+  function parseFile(file){
+    const name=(file.name||"").toLowerCase();
+    diag(`File selected: ${file.name} | size ${file.size} | type ${file.type}`);
+    if(name.endsWith(".tsx") || (!name.endsWith(".csv") && !name.endsWith(".xlsx") && !name.endsWith(".xls"))){
       $("#extHint").classList.remove("hidden");
     } else {
       $("#extHint").classList.add("hidden");
     }
-
     if(name.endsWith(".csv")){
-      Papa.parse(f,{header:true,skipEmptyLines:true,complete:(res)=>handleParsedRows(res.data),error:()=>toast("CSV parse error.")});
+      Papa.parse(file,{header:true,skipEmptyLines:true,complete:(res)=>handleParsedRows(res.data),error:(e)=>{toast("CSV parse error."); diag("Papa error: "+(e?.message||e));}});
     } else if(name.endsWith(".xlsx") || name.endsWith(".xls")){
       const r=new FileReader();
       r.onload=(evt)=>{
@@ -380,44 +396,33 @@
           });
           handleParsedRows(all);
         }catch(err){
-          console.error(err); toast("XLSX parse error.");
+          toast("XLSX parse error."); diag("XLSX error: "+err);
         }
       };
-      r.readAsArrayBuffer(f);
+      r.onerror=(e)=>{ toast("Read error."); diag("FileReader error"); };
+      r.readAsArrayBuffer(file);
     } else {
-      toast("Unsupported file. Use .csv or .xlsx");
+      toast("Unsupported file. Use .csv or .xlsx"); diag("Unsupported extension.");
     }
-    e.target.value="";
-  });
+  }
 
-  $("#dlTemplate").addEventListener("click",()=>{
-    const headers=["Purchase Date","Year/Make/Model","VIN","Body Style","Mileage","Selling Dealership","MSRP ($)","Agreed Amount ($)","Payment Method","Payment Status","Title Status","Title Received Date","Floorplan","Notes"];
-    const csv=headers.join(",")+"\n"; const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob);
-    const a=document.createElement("a"); a.href=url; a.download="vehicle_template.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-  });
-  $("#exportBtn").addEventListener("click",()=>{ if(rows.length===0){ alert("No data to export"); return; } const csv=Papa.unparse(rows); const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="vehicle_acquisitions.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); });
-  $("#exportJson").addEventListener("click",()=>{ const blob=new Blob([JSON.stringify(rows,null,2)],{type:"application/json"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="vehicle_acquisitions_backup.json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); });
+  // Input
+  $("#fileInput").addEventListener("change",(e)=>{ const f=e.target.files?.[0]; if(f) parseFile(f); e.target.value=""; });
 
-  /* ===== Add/Edit/Delete ===== */
-  $("#addBtn").addEventListener("click",()=>{ editingIndex=null; $("#modalTitle").textContent="Add Vehicle"; $$("#modal input, #modal select").forEach(el=>el.value=""); $("#fTitleStatus").value="Not Received"; $("#fFloor").value="None"; $("#fStatus").value="Pending"; openModal(); });
-  $("#saveVehicle").addEventListener("click",()=>{
-    const row={"Purchase Date":$("#fDate").value,"Year/Make/Model":$("#fModel").value,"VIN":$("#fVIN").value,"Body Style":$("#fBody").value,"Mileage":$("#fMileage").value,
-      "Selling Dealership":$("#fDealer").value,"MSRP ($)":Number($("#fMSRP").value||0),"Agreed Amount ($)":Number($("#fAmount").value||0),
-      "Payment Method":$("#fMethod").value,"Payment Status":$("#fStatus").value,"Title Status":$("#fTitleStatus").value||"Not Received","Title Received Date":$("#fTitleDate").value||"",
-      "Floorplan":$("#fFloor").value||"None","Notes":$("#fNotes").value};
-    if(editingIndex===null){ rows.push(row); toast("Vehicle added âœ“"); } else { rows[editingIndex]=row; editingIndex=null; toast("Vehicle updated âœ“"); }
-    saveData(rows); renderAll(); closeModal();
-  });
-  $("#tableBody").addEventListener("click",(e)=>{
-    const btn=e.target.closest("button[data-action]"); if(!btn) return; const idx=Number(btn.dataset.idx), act=btn.dataset.action;
-    if(act==="delete"){ rows.splice(idx,1); saveData(rows); renderAll(); toast("Deleted."); }
-    if(act==="edit"){ const r=rows[idx]; editingIndex=idx; $("#modalTitle").textContent="Edit Vehicle";
-      $("#fDate").value=r["Purchase Date"]||""; $("#fModel").value=r["Year/Make/Model"]||""; $("#fVIN").value=r["VIN"]||""; $("#fBody").value=r["Body Style"]||"";
-      $("#fMileage").value=r["Mileage"]||""; $("#fDealer").value=r["Selling Dealership"]||""; $("#fMSRP").value=r["MSRP ($)"]||"";
-      $("#fAmount").value=r["Agreed Amount ($)"]||""; $("#fMethod").value=r["Payment Method"]||""; $("#fStatus").value=r["Payment Status"]||"Pending";
-      $("#fTitleStatus"].value=r["Title Status"]||"Not Received"; $("#fTitleDate").value=r["Title Received Date"]||"";
-      $("#fFloor").value=r["Floorplan"]||"None"; $("#fNotes").value=r["Notes"]||""; openModal();
-    }
+  // Drag & Drop
+  const drop=$("#drop");
+  ["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,(e)=>{ e.preventDefault(); e.stopPropagation(); drop.classList.add("drag"); }));
+  ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,(e)=>{ e.preventDefault(); e.stopPropagation(); drop.classList.remove("drag"); }));
+  drop.addEventListener("drop",(e)=>{ const f=e.dataTransfer?.files?.[0]; if(f) parseFile(f); });
+
+  // Load demo data
+  $("#loadDemo").addEventListener("click",()=>{
+    const demo=[
+      {"Purchase Date":"2025-02-01","Year/Make/Model":"2018 Toyota Camry","VIN":"4T1BF1FK0JU000001","Body Style":"Sedan","Mileage":65000,"Selling Dealership":"ABC Motors","MSRP ($)":23000,"Agreed Amount ($)":14500,"Payment Method":"Wire","Payment Status":"Cleared","Title Status":"Received","Title Received Date":"2025-02-10","Floorplan":"None","Notes":"Clean title"},
+      {"Purchase Date":"2025-03-05","Year/Make/Model":"2019 Honda CR-V","VIN":"2HKRW2H52KH000002","Body Style":"SUV","Mileage":42000,"Selling Dealership":"Westside Auto","MSRP ($)":27000,"Agreed Amount ($)":18200,"Payment Method":"Check","Payment Status":"Pending","Title Status":"Not Received","Title Received Date":"","Floorplan":"NextGear","Notes":""},
+      {"Purchase Date":"2025-04-18","Year/Make/Model":"2017 Ford F-150","VIN":"1FTEW1EP3HFA00003","Body Style":"Pickup","Mileage":88000,"Selling Dealership":"Metro Trucks","MSRP ($)":35000,"Agreed Amount ($)":21000,"Payment Method":"Cashier Check","Payment Status":"Cleared","Title Status":"Received","Title Received Date":"2025-04-25","Floorplan":"AFC","Notes":"Minor scratches"}
+    ];
+    handleParsedRows(demo);
   });
 
   /* ===== Filter events & init ===== */
