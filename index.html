@@ -16,31 +16,30 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <style>
-  /* ===== Background ===== */
-  /* 1) Soft full-page background overlay (keeps UI readable) */
+  /* ===== Background (stronger & more visible) ===== */
   body::before{
     content:"";
     position:fixed; inset:0; z-index:-2;
     background:
-      linear-gradient(180deg, rgba(248,250,252,.92), rgba(248,250,252,.92)),
+      linear-gradient(180deg, rgba(248,250,252,.85), rgba(248,250,252,.85)),
       url("1150-HP-Jeep-Grand-Cherokee-Trackhawk.avif") center/cover no-repeat fixed;
-    filter:saturate(110%) contrast(102%);
+    filter:saturate(130%) contrast(110%) brightness(105%);
   }
-  /* 2) Decorative corner art (fills the corner with the car image) */
+  /* Decorative corner art */
   body::after{
     content:"";
     position:fixed;
-    right:-40px; bottom:-40px; /* push a bit out so it looks tucked in the corner */
-    width:580px; height:380px;  /* desktop size */
+    right:-20px; bottom:-20px;
+    width:650px; height:420px;
     background:url("1150-HP-Jeep-Grand-Cherokee-Trackhawk.avif") bottom right/contain no-repeat;
-    opacity:.16;
+    opacity:.35;
     pointer-events:none;
     z-index:-1;
-    filter:saturate(110%);
+    filter:saturate(130%) contrast(110%);
   }
   @media (max-width: 768px){
     body::after{
-      width:320px; height:210px; right:-24px; bottom:-24px; opacity:.18;
+      width:360px; height:240px; right:-10px; bottom:-10px; opacity:.45;
     }
   }
 
@@ -63,6 +62,7 @@
   .toast.show{opacity:1;transform:none}
   .modal-root{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.4);padding:1rem}
   .modal-root.flex{display:flex}.modal-panel{background:#fff;border-radius:1rem;box-shadow:0 20px 60px rgba(0,0,0,.25);width:100%;max-width:48rem;max-height:85vh;overflow:auto;padding:1.5rem}
+  .hint{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;border-radius:.75rem;padding:.5rem .75rem;font-size:.85rem}
 </style>
 </head>
 
@@ -93,6 +93,11 @@
 
   <!-- Content -->
   <div class="max-w-6xl mx-auto px-4 py-6">
+    <!-- Optional hint if wrong file extension -->
+    <div id="extHint" class="hint mb-4 hidden">
+      âš ï¸ Your file appears to be named <b>.tsx</b>. Please rename it to <b>.xlsx</b> or export a CSV, then click <b>Import CSV/XLSX</b> again.
+    </div>
+
     <!-- KPIs -->
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="card flex justify-between items-center fade-in"><div><p class="text-slate-500">Total Vehicles</p><div id="kpiTotal" class="text-4xl font-extrabold mt-1">0</div></div><i data-lucide="car" class="w-8 h-8 text-blue-500"></i></div>
@@ -202,14 +207,14 @@
 <script>
   /* ===== Helpers & State ===== */
   const $=(s)=>document.querySelector(s), $$=(s)=>Array.from(document.querySelectorAll(s));
-  const LS_KEY="vat_data_v4", FILTERS_KEY="vat_filters_v3";
+  const LS_KEY="vat_data_v5", FILTERS_KEY="vat_filters_v3";
   let rows=loadData(), monthlyChart, editingIndex=null;
 
   function loadData(){ try{return JSON.parse(localStorage.getItem(LS_KEY))||[]}catch{return[]} }
   function saveData(v){ localStorage.setItem(LS_KEY, JSON.stringify(v)); }
   function fmtMoney(n){ const x=Number(n||0); return x.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:0}); }
   function ym(dstr){ const d=new Date(dstr); return isNaN(d)?"":d.toISOString().slice(0,7); }
-  function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2500); }
+  function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2600); }
 
   /* ===== Modal ===== */
   function openModal(){ $("#modal").classList.add("flex"); document.body.style.overflow="hidden"; }
@@ -238,7 +243,7 @@
     const hay=[r.VIN,r["Year/Make/Model"],r["Selling Dealership"],r["Body Style"],r.Notes,r["Floorplan"]].map(x=>(x||"").toLowerCase()).join(" ");
     if(q && !hay.includes(q)) return false;
     if(st && (r["Payment Status"]||"")!==st) return false;
-    if	m  && (r["Payment Method"]||"")!==m) return false;
+    if(m  && (r["Payment Method"]||"")!==m) return false;
     if(fl && (r["Floorplan"]||"None")!==fl) return false;
     if(tt && (r["Title Status"]||"Not Received")!==tt) return false;
     if(dl && (r["Selling Dealership"]||"")!==dl) return false;
@@ -301,8 +306,7 @@
   }
   function renderAll(){ renderKPIs(); renderDealerOptions(); renderTable(); renderDealerSummary(); renderMonthlyTable(); renderMonthlyChart(); }
 
-  /* ===== Import / Export (robust) ===== */
-  // Excel serial date -> ISO YYYY-MM-DD
+  /* ===== Import / Export (robust, ArrayBuffer) ===== */
   function excelSerialToISO(v){
     if(v===undefined || v===null || v==="") return "";
     if(typeof v==="number"){ const epoch = new Date(Date.UTC(1899,11,30)); const ms=v*86400000; const d=new Date(epoch.getTime()+ms); return isNaN(d)? "": d.toISOString().slice(0,10); }
@@ -328,19 +332,12 @@
     const out={};
     for(const k in map){ out[k]=""; for(const c of map[k]){ if(obj[c]!==undefined && obj[c]!==null){ out[k]=obj[c]; break; } } }
     if(!out["Floorplan"]) out["Floorplan"]="None"; if(!out["Title Status"]) out["Title Status"]="Not Received";
-
-    // Dates
     out["Purchase Date"]=excelSerialToISO(out["Purchase Date"]);
     out["Title Received Date"]=excelSerialToISO(out["Title Received Date"]);
-
-    // Numbers
     const fix=(v)=>{ if(typeof v==="number") return v; const n=(v+"").replace(/[^0-9.\-]/g,""); return n?Number(n):0; };
     out["Agreed Amount ($)"]=fix(out["Agreed Amount ($)"]); out["MSRP ($)"]=fix(out["MSRP ($)"]);
     out["Mileage"]=fix(out["Mileage"])||"";
-
-    // Trim strings
     ["Year/Make/Model","VIN","Body Style","Selling Dealership","Payment Method","Payment Status","Title Status","Floorplan","Notes"].forEach(k=>{ if(out[k]!=="" && out[k]!==null) out[k]=(out[k]+"").trim(); });
-
     return out;
   }
   function isRowEmpty(r){
@@ -352,29 +349,43 @@
     return !hasAny;
   }
 
+  function handleParsedRows(allRows){
+    const norm=allRows.map(normalizeRow).filter(r=>!isRowEmpty(r));
+    if(norm.length===0){ toast("No rows found. Ensure headers exist on the first row."); return; }
+    rows=rows.concat(norm); saveData(rows); renderAll(); toast(`Imported ${norm.length} row(s).`);
+  }
+
   $("#fileInput").addEventListener("change",(e)=>{
-    const f=e.target.files[0]; if(!f) return; const ext=f.name.split(".").pop().toLowerCase();
-
-    const append=(arr)=>{
-      const norm=arr.map(normalizeRow).filter(r=>!isRowEmpty(r));
-      rows=rows.concat(norm); saveData(rows); renderAll(); toast(`Imported ${norm.length} row(s).`);
-    };
-
-    if(ext==="csv"){
-      Papa.parse(f,{header:true,skipEmptyLines:true,complete:(res)=>append(res.data)});
+    const f=e.target.files[0]; if(!f) return;
+    const name=f.name.toLowerCase();
+    if(name.endsWith(".tsx")){ // common mistake seen in your repo
+      $("#extHint").classList.remove("hidden");
     } else {
+      $("#extHint").classList.add("hidden");
+    }
+
+    if(name.endsWith(".csv")){
+      Papa.parse(f,{header:true,skipEmptyLines:true,complete:(res)=>handleParsedRows(res.data),error:()=>toast("CSV parse error.")});
+    } else if(name.endsWith(".xlsx") || name.endsWith(".xls")){
       const r=new FileReader();
       r.onload=(evt)=>{
-        const wb=XLSX.read(evt.target.result,{type:"binary"});
-        let all=[];
-        wb.SheetNames.forEach(name=>{
-          const sheet=wb.Sheets[name];
-          const data=XLSX.utils.sheet_to_json(sheet,{defval:""});
-          all=all.concat(data);
-        });
-        append(all);
+        try{
+          const data=new Uint8Array(evt.target.result);
+          const wb=XLSX.read(data,{type:"array"});
+          let all=[];
+          wb.SheetNames.forEach(name=>{
+            const sheet=wb.Sheets[name];
+            const json=XLSX.utils.sheet_to_json(sheet,{defval:""});
+            all=all.concat(json);
+          });
+          handleParsedRows(all);
+        }catch(err){
+          console.error(err); toast("XLSX parse error.");
+        }
       };
-      r.readAsBinaryString(f);
+      r.readAsArrayBuffer(f);
+    } else {
+      toast("Unsupported file. Use .csv or .xlsx");
     }
     e.target.value="";
   });
