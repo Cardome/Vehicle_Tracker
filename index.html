@@ -18,49 +18,40 @@
 <style>
   /* ===== Background ===== */
   body::before{
-    content:""; position:fixed; inset:0; z-index:-2;
+    content:"";
+    position:fixed; inset:0; z-index:-2;
     background:
-      radial-gradient(1200px 600px at 10% -10%, rgba(59,130,246,.12), transparent 60%),
-      radial-gradient(900px 500px at 100% 0%, rgba(139,92,246,.12), transparent 60%),
-      linear-gradient(180deg, rgba(248,250,252,.85), rgba(248,250,252,.90)),
+      linear-gradient(180deg, rgba(248,250,252,.94), rgba(248,250,252,.92)),
       url("1150-HP-Jeep-Grand-Cherokee-Trackhawk.avif") center/cover no-repeat fixed;
-    filter:saturate(130%) contrast(108%) brightness(104%);
+    filter:saturate(110%) contrast(102%);
   }
-  /* Corner image (bigger “more showable” vehicle) */
-  body::after{
-    content:""; position:fixed; right:-10px; bottom:-14px; width:760px; height:480px;
-    background:url("1150-HP-Jeep-Grand-Cherokee-Trackhawk.avif") bottom right/contain no-repeat;
-    opacity:.55; pointer-events:none; z-index:-1; filter:saturate(135%) contrast(112%);
-  }
-  @media (max-width: 1024px){ body::after{ width:560px; height:360px; opacity:.60; } }
-  @media (max-width: 768px){ body::after{ width:420px; height:280px; right:-6px; bottom:-8px; opacity:.65; } }
-
   /* ===== UI polish ===== */
-  .card{background:rgba(255,255,255,.96);backdrop-filter:saturate(160%) blur(8px);border:1px solid rgba(226,232,240,.85);border-radius:1.1rem;box-shadow:0 10px 30px rgba(2,6,23,.08);padding:1.2rem}
-  .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:.9rem;padding:.65rem 1rem;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(15,23,42,.08);transition:transform .08s ease}
-  .btn:active{transform:translateY(1px)}
+  .card{background:rgba(255,255,255,.98);backdrop-filter:saturate(160%) blur(8px);border:1px solid rgba(226,232,240,.85);border-radius:1rem;box-shadow:0 10px 30px rgba(2,6,23,.08);padding:1.2rem}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:.8rem;padding:.6rem 1rem;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(15,23,42,.08)}
   .btn-green{background:#059669;color:#fff}.btn-green:hover{background:#047857}
   .btn-blue{background:#2563eb;color:#fff}.btn-blue:hover{background:#1d4ed8}
   .btn-purple{background:#7c3aed;color:#fff}.btn-purple:hover{background:#6d28d9}
-  .btn-outline{background:#fff;color:#334155;border:1px solid #e2e8f0}
   .chip{display:inline-flex;align-items:center;padding:.125rem .6rem;border-radius:9999px;font-size:.75rem;font-weight:800}
   .chip-amber{background:#fde68a;color:#92400e}.chip-emerald{background:#d1fae5;color:#065f46}.chip-indigo{background:#e0e7ff;color:#3730a3}
-  .input,.select{width:100%;border:1px solid #e2e8f0;border-radius:1rem;padding:.7rem .95rem .7rem 2.35rem;background:#fff;outline:none}
+  .input,.select{width:100%;border:1px solid #e2e8f0;border-radius:.9rem;padding:.7rem .9rem .7rem 2.35rem;background:#fff;outline:none}
   .input:focus,.select:focus{box-shadow:0 0 0 3px rgba(79,70,229,.25)}
   .filter-wrap{position:relative}.filter-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:#94a3b8}
-  tr:hover td{background:rgba(241,245,249,.55)}.fade-in{animation:fade .3s ease both}@keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+  tr:hover td{background:rgba(241,245,249,.55)}.fade-in{animation:fade .25s ease both}@keyframes fade{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:none}}
   .placeholder-cell{color:#94a3b8}
   .hero{background:linear-gradient(120deg,#eef2ff 0%,#e6fffb 45%,#ecfeff 80%);border-bottom:1px solid rgba(226,232,240,.8)}
   .sticky-header{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#f8fafc 60%,rgba(248,250,252,0))}
-  thead th{position:sticky;top:0;background:#f8fafc}
-  .toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;border-radius:.9rem;padding:.7rem 1rem;box-shadow:0 8px 30px rgba(0,0,0,.2);opacity:0;transform:translateY(10px);transition:all .2s}
+  .toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;border-radius:.75rem;padding:.7rem 1rem;box-shadow:0 8px 30px rgba(0,0,0,.2);opacity:0;transform:translateY(10px);transition:all .2s}
   .toast.show{opacity:1;transform:none}
   .modal-root{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.4);padding:1rem}
-  .modal-root.flex{display:flex}.modal-panel{background:#fff;border-radius:1rem;box-shadow:0 20px 60px rgba(0,0,0,.22);width:100%;max-width:48rem;max-height:85vh;overflow:auto;padding:1.5rem}
-  .hint{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;border-radius:.9rem;padding:.6rem .9rem;font-size:.9rem}
-  .dz{border:2px dashed #cbd5e1;border-radius:1rem;padding:1rem;display:flex;gap:.75rem;align-items:center;justify-content:center;background:#f8fafc}
-  .dz.drag{background:#eef2ff;border-color:#a5b4fc}
-  .diag{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;background:#0b1220;color:#e5e7eb;border-radius:.75rem;padding:.75rem;white-space:pre-wrap}
+  .modal-root.flex{display:flex}.modal-panel{background:#fff;border-radius:1rem;box-shadow:0 20px 60px rgba(0,0,0,.25);width:100%;max-width:48rem;max-height:85vh;overflow:auto;padding:1.5rem}
+  /* Pagination */
+  .pager { display:flex; gap:.35rem; flex-wrap:wrap; align-items:center; justify-content:center }
+  .pager button { border:1px solid #e5e7eb; background:#fff; padding:.45rem .7rem; border-radius:.6rem; font-weight:800; }
+  .pager button[disabled]{opacity:.5; cursor:not-allowed}
+  .pager .is-active{background:#111827; color:#fff; border-color:#111827}
+  /* Better wrapping */
+  .cell-wrap    { white-space:normal; word-break:break-word; }
+  .cell-nowrap  { white-space:nowrap; }
 </style>
 </head>
 
@@ -68,9 +59,9 @@
   <!-- Header -->
   <div class="sticky-header">
     <div class="hero">
-      <div class="max-w-7xl mx-auto px-4 py-5 flex items-center justify-between">
+      <div class="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <img src="logo.png" class="h-12 w-auto object-contain rounded" alt="Logo" onerror="this.style.display='none'">
+          <img src="logo.png" class="h-12 w-auto object-contain" alt="Logo" onerror="this.style.display='none'">
           <div class="leading-tight">
             <h1 class="text-3xl md:text-4xl font-black tracking-tight">Vehicle Acquisition Tracker</h1>
             <p class="text-slate-500">Manage and track your vehicle purchases</p>
@@ -80,7 +71,6 @@
           <label class="btn btn-green cursor-pointer"><i data-lucide="upload"></i><span class="hidden sm:inline">Import CSV/XLSX</span>
             <input id="fileInput" type="file" accept=".csv,.xlsx,.xls" class="hidden">
           </label>
-          <button id="loadMahdi" class="btn btn-outline"><i data-lucide="database"></i><span class="hidden md:inline">Load Mahdi Excel</span></button>
           <button id="dlTemplate" class="btn btn-blue"><i data-lucide="file-down"></i><span class="hidden sm:inline">CSV Template</span></button>
           <button id="exportBtn" class="btn btn-blue"><i data-lucide="download"></i><span class="hidden sm:inline">Export CSV</span></button>
           <button id="exportJson" class="btn btn-blue"><i data-lucide="braces"></i><span class="hidden sm:inline">Backup JSON</span></button>
@@ -91,21 +81,7 @@
   </div>
 
   <!-- Content -->
-  <div class="max-w-7xl mx-auto px-4 py-6">
-    <div id="extHint" class="hint mb-4 hidden">⚠️ That file doesn't look like a spreadsheet. Please import a <b>.xlsx</b> or <b>.csv</b>.</div>
-
-    <!-- Drag & Drop -->
-    <div id="drop" class="dz mb-4">
-      <i data-lucide="file-input" class="w-5 h-5 text-slate-500"></i>
-      <span class="text-slate-600">Drag a <b>.xlsx</b> or <b>.csv</b> here, or use “Import CSV/XLSX”.</span>
-    </div>
-
-    <!-- Diagnostics -->
-    <div class="card mb-4">
-      <div class="text-sm text-slate-500 mb-2">Import diagnostics</div>
-      <div id="diag" class="diag text-xs">Ready.</div>
-    </div>
-
+  <div class="max-w-6xl mx-auto px-4 py-6">
     <!-- KPIs -->
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="card flex justify-between items-center fade-in"><div><p class="text-slate-500">Total Vehicles</p><div id="kpiTotal" class="text-4xl font-extrabold mt-1">0</div></div><i data-lucide="car" class="w-8 h-8 text-blue-500"></i></div>
@@ -134,7 +110,7 @@
         <div class="filter-wrap"><i data-lucide="store" class="filter-icon"></i>
           <select id="dealerFilter" class="select"><option value="">Dealer: All</option></select>
         </div>
-        <div class="flex items-stretch"><button id="clearFilters" class="btn w-full btn-outline"><i data-lucide="eraser"></i>Clear</button></div>
+        <div class="flex items-stretch"><button id="clearFilters" class="btn w-full" style="background:#eef2f7"><i data-lucide="eraser"></i>Clear</button></div>
       </div>
 
       <div class="overflow-x-auto mt-4">
@@ -152,6 +128,9 @@
         </table>
         <div id="emptyState" class="text-center text-slate-400 py-6 hidden">No results. Try clearing filters.</div>
       </div>
+
+      <!-- Pagination -->
+      <div id="pagination" class="mt-3 flex items-center justify-center"></div>
     </div>
 
     <!-- Dealer Summary -->
@@ -215,15 +194,18 @@
 <script>
   /* ===== Helpers & State ===== */
   const $=(s)=>document.querySelector(s), $$=(s)=>Array.from(document.querySelectorAll(s));
-  const LS_KEY="vat_data_v7", FILTERS_KEY="vat_filters_v3"; // <- NEW version key
+  const LS_KEY="vat_data_v7", FILTERS_KEY="vat_filters_v3";
   let rows=loadData(), monthlyChart, editingIndex=null;
-  const diag=(msg)=>{ const el=$("#diag"); el.textContent=String(msg); console.log("[diag]", msg); }
+
+  // Pagination
+  const PAGE_SIZE = 15;
+  let currentPage = 1;
 
   function loadData(){ try{return JSON.parse(localStorage.getItem(LS_KEY))||[]}catch{return[]} }
   function saveData(v){ localStorage.setItem(LS_KEY, JSON.stringify(v)); }
   function fmtMoney(n){ const x=Number(n||0); return x.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:0}); }
   function ym(dstr){ const d=new Date(dstr); return isNaN(d)?"":d.toISOString().slice(0,7); }
-  function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2800); }
+  function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2500); }
 
   /* ===== Modal ===== */
   function openModal(){ $("#modal").classList.add("flex"); document.body.style.overflow="hidden"; }
@@ -258,20 +240,30 @@
     if(dl && (r["Selling Dealership"]||"")!==dl) return false;
     return true;
   }
+  function getFilteredRows(){ return rows.filter(rowMatches); }
 
   /* ===== Dealer options & summary ===== */
   function getDealers(list){ const s=new Set(); list.forEach(r=>{ const d=(r["Selling Dealership"]||"").trim(); if(d) s.add(d); }); return Array.from(s).sort((a,b)=>a.localeCompare(b)); }
   function renderDealerOptions(){ const sel=$("#dealerFilter"), current=sel.value; const dealers=getDealers(rows); sel.innerHTML=`<option value="">Dealer: All</option>`+dealers.map(d=>`<option ${d===current?"selected":""}>${d}</option>`).join(""); }
+
+  function titleCase(s){
+    const upperTokens = new Set(["LLC","INC","LLP","LTD","AUTO","SALES","MOTORS","FINANCE","CARS","TRUE","BLU","BLUE"]);
+    return (s||"").toLowerCase().split(/\\s+/).map(w=>upperTokens.has(w.toUpperCase())?w.toUpperCase():(w[0]?w[0].toUpperCase()+w.slice(1):"")).join(" ");
+  }
   function computeDealerSummary(){
-    const filtered=rows.filter(rowMatches); const map={};
-    filtered.forEach(r=>{ const d=(r["Selling Dealership"]||"").trim()||"—"; const amt=Number(r["Agreed Amount ($)"]||0); if(!map[d]) map[d]={count:0,total:0}; map[d].count++; map[d].total+=amt; });
-    return Object.entries(map).map(([dealer,v])=>({dealer,...v,avg:v.count?v.total/v.count:0})).sort((a,b)=>b.total-a.total);
+    const filtered=getFilteredRows(); const map={};
+    filtered.forEach(r=>{
+      const raw=(r["Selling Dealership"]||"").trim(); const key=raw.replace(/\\s+/g," ").toLowerCase();
+      const display=raw?titleCase(raw):"â€”"; const amt=Number(r["Agreed Amount ($)"]||0);
+      if(!map[key]) map[key]={dealer:display,count:0,total:0}; map[key].count++; map[key].total+=amt;
+    });
+    return Object.values(map).map(v=>({dealer:v.dealer,count:v.count,total:v.total,avg:v.count?v.total/v.count:0})).sort((a,b)=>b.total-a.total||a.dealer.localeCompare(b.dealer));
   }
   function renderDealerSummary(){
     const tb=$("#dealerBody"); tb.innerHTML=""; const arr=computeDealerSummary();
     if(arr.length===0){ tb.innerHTML=`<tr><td class="px-3 py-3 text-slate-400" colspan="4">No data.</td></tr>`; return; }
     let gc=0,gt=0; arr.forEach(s=>{ const tr=document.createElement("tr"); tr.innerHTML=`<td class="px-3 py-2">${s.dealer}</td><td class="px-3 py-2 font-semibold">${s.count}</td><td class="px-3 py-2 font-semibold">${fmtMoney(s.total)}</td><td class="px-3 py-2">${fmtMoney(s.avg)}</td>`; tb.appendChild(tr); gc+=s.count; gt+=s.total; });
-    const tr=document.createElement("tr"); tr.innerHTML=`<td class="px-3 py-2 font-bold">Total</td><td class="px-3 py-2 font-bold">${gc}</td><td class="px-3 py-2 font-bold">${fmtMoney(gt)}</td><td class="px-3 py-2">—</td>`; tb.appendChild(tr);
+    const tr=document.createElement("tr"); tr.innerHTML=`<td class="px-3 py-2 font-bold">Total</td><td class="px-3 py-2 font-bold">${gc}</td><td class="px-3 py-2 font-bold">${fmtMoney(gt)}</td><td class="px-3 py-2">â€”</td>`; tb.appendChild(tr);
   }
 
   /* ===== Monthly ===== */
@@ -281,67 +273,58 @@
 
   /* ===== Table ===== */
   const STATUSES=["Pending","Cleared","Paid"];
-  function pill(v){ const s=(v||"").toLowerCase(); const cls=s==="cleared"?"chip chip-emerald":s==="paid"?"chip chip-indigo":"chip chip-amber"; return `<span class="${cls}">${v||"—"}</span>`; }
-  function val(v){ return v ? v : `<span class="placeholder-cell">—</span>`; }
+  function pill(v){ const s=(v||"").toLowerCase(); const cls=s==="cleared"?"chip chip-emerald":s==="paid"?"chip chip-indigo":"chip chip-amber"; return `<span class="${cls}">${v||"â€”"}</span>`; }
+  function val(v){ return v ? v : `<span class="placeholder-cell">â€”</span>`; }
+
+  function renderPagination(total, totalPages){
+    const host=$("#pagination"); if(!host) return; if(total<=PAGE_SIZE){ host.innerHTML=""; return; }
+    const makeBtn=(label,page,disabled=false,active=false)=>{ const b=document.createElement("button"); b.textContent=label; if(disabled) b.disabled=true; if(active) b.classList.add("is-active"); b.addEventListener("click",()=>{ if(currentPage!==page){ currentPage=page; renderTable(); } }); return b; };
+    const container=document.createElement("div"); container.className="pager";
+    container.appendChild(makeBtn("â€¹ Prev", Math.max(1,currentPage-1), currentPage===1));
+    const windowSize=5; let start=Math.max(1,currentPage-Math.floor(windowSize/2)); let end=Math.min(totalPages,start+windowSize-1); start=Math.max(1,end-windowSize+1);
+    for(let p=start;p<=end;p++){ container.appendChild(makeBtn(String(p),p,false,p===currentPage)); }
+    container.appendChild(makeBtn("Next â€º", Math.min(totalPages,currentPage+1), currentPage===totalPages));
+    const info=document.createElement("div"); info.className="ml-3 text-sm text-slate-500"; info.textContent=`Showing ${(currentPage-1)*PAGE_SIZE+1}-${Math.min(currentPage*PAGE_SIZE,total)} of ${total}`;
+    host.innerHTML=""; host.appendChild(container); host.appendChild(info);
+  }
+
   function renderTable(){
-    const tb=$("#tableBody"); tb.innerHTML=""; const visible=rows.filter(rowMatches); $("#emptyState").classList.toggle("hidden",visible.length>0);
-    visible.forEach((r)=>{ const idx=rows.indexOf(r); const tr=document.createElement("tr"); tr.className="fade-in";
+    const tb=$("#tableBody"); tb.innerHTML="";
+    const filtered=getFilteredRows(); const total=filtered.length; const totalPages=Math.max(1, Math.ceil(total/PAGE_SIZE)); if(currentPage>totalPages) currentPage=totalPages;
+    const start=(currentPage-1)*PAGE_SIZE, end=start+PAGE_SIZE; const visible=filtered.slice(start,end);
+    $("#emptyState").classList.toggle("hidden", visible.length>0);
+    visible.forEach(r=>{ const idx=rows.indexOf(r); const tr=document.createElement("tr"); tr.className="fade-in";
       tr.innerHTML=`
-        <td class="px-3 py-2">${val(r["Purchase Date"])}</td>
-        <td class="px-3 py-2">${val(r["Year/Make/Model"])}</td>
-        <td class="px-3 py-2">${val(r["VIN"])}</td>
-        <td class="px-3 py-2">${val(r["Body Style"])}</td>
-        <td class="px-3 py-2">${val(r["Mileage"])}</td>
-        <td class="px-3 py-2">${val(r["Selling Dealership"])}</td>
-        <td class="px-3 py-2">${val(r["MSRP ($)"]?fmtMoney(r["MSRP ($)"]):"")}</td>
-        <td class="px-3 py-2 font-semibold">${fmtMoney(r["Agreed Amount ($)"])}</td>
-        <td class="px-3 py-2">${val(r["Payment Method"])}</td>
-        <td class="px-3 py-2"><div class="relative inline-block"><button class="inline-flex items-center gap-1">${pill(r["Payment Status"])}</button><select data-idx="${idx}" class="absolute left-0 top-0 opacity-0 w-full h-full cursor-pointer" title="Change status">${STATUSES.map(s=>`<option ${s===(r["Payment Status"]||"")?"selected":""}>${s}</option>`).join("")}</select></div></td>
-        <td class="px-3 py-2">${val(r["Title Status"])}</td>
-        <td class="px-3 py-2">${val(r["Title Received Date"])}</td>
-        <td class="px-3 py-2">${val(r["Floorplan"]||"None")}</td>
-        <td class="px-3 py-2">${val(r["Notes"])}</td>
-        <td class="px-3 py-2 text-right">
-          <button class="text-slate-500 hover:text-blue-600" data-idx="${idx}" data-action="edit" title="Edit"><i data-lucide="pencil"></i></button>
-          <button class="text-slate-500 hover:text-red-500 ml-2" data-idx="${idx}" data-action="delete" title="Delete"><i data-lucide="trash-2"></i></button>
-        </td>`;
+        <td class="px-3 py-2 cell-nowrap">${val(r["Purchase Date"])}</td>
+        <td class="px-3 py-2 cell-wrap">${val(r["Year/Make/Model"])}</td>
+        <td class="px-3 py-2 cell-nowrap">${val(r["VIN"])}</td>
+        <td class="px-3 py-2 cell-nowrap">${val(r["Body Style"]||"â€”")}</td>
+        <td class="px-3 py-2 cell-nowrap">${val(r["Mileage"])}</td>
+        <td class="px-3 py-2 cell-wrap">${val(r["Selling Dealership"])}</td>
+        <td class="px-3 py-2 cell-nowrap">${val(r["MSRP ($)"]?fmtMoney(r["MSRP ($)"]):"")}</td>
+        <td class="px-3 py-2 font-semibold cell-nowrap">${fmtMoney(r["Agreed Amount ($)"])}</td>
+        <td class="px-3 py-2 cell-nowrap">${val(r["Payment Method"])}</td>
+        <td class="px-3 py-2 cell-nowrap"><div class="relative inline-block"><button class="inline-flex items-center gap-1">${pill(r["Payment Status"])}</button><select data-idx="${idx}" class="absolute left-0 top-0 opacity-0 w-full h-full cursor-pointer" title="Change status">${STATUSES.map(s=>`<option ${s===(r["Payment Status"]||"")?"selected":""}>${s}</option>`).join("")}</select></div></td>
+        <td class="px-3 py-2 cell-nowrap">${val(r["Title Status"])}</td>
+        <td class="px-3 py-2 cell-nowrap">${val(r["Title Received Date"])}</td>
+        <td class="px-3 py-2 cell-nowrap">${val(r["Floorplan"]||"None")}</td>
+        <td class="px-3 py-2 cell-wrap">${val(r["Notes"])}</td>
+        <td class="px-3 py-2 text-right"><button class="text-slate-400 hover:text-blue-600" data-idx="${idx}" data-action="edit" title="Edit"><i data-lucide="pencil"></i></button><button class="text-slate-400 hover:text-red-500 ml-2" data-idx="${idx}" data-action="delete" title="Delete"><i data-lucide="trash-2"></i></button></td>`;
       tb.appendChild(tr);
     });
-    // Inline status change
     tb.querySelectorAll("select[title='Change status']").forEach(sel=>{
-      sel.addEventListener("change",(e)=>{ const i=Number(e.target.dataset.idx); if(i>=0){ rows[i]["Payment Status"]=e.target.value; saveData(rows); renderTable(); renderKPIs(); }});
-    });
-    // Edit / Delete (event handlers bound per render)
-    tb.querySelectorAll("button[data-action]").forEach(btn=>{
-      btn.addEventListener("click",()=>{
-        const i=Number(btn.dataset.idx); const act=btn.dataset.action;
-        if(!(i>=0)) return;
-        if(act==="delete"){
-          if(confirm("Delete this vehicle? This cannot be undone.")){
-            rows.splice(i,1); saveData(rows); renderAll(); toast("Deleted.");
-          }
-        } else if(act==="edit"){
-          const r=rows[i]; editingIndex=i; $("#modalTitle").textContent="Edit Vehicle";
-          $("#fDate").value=r["Purchase Date"]||""; $("#fModel").value=r["Year/Make/Model"]||""; $("#fVIN").value=r["VIN"]||""; $("#fBody").value=r["Body Style"]||"";
-          $("#fMileage").value=r["Mileage"]||""; $("#fDealer").value=r["Selling Dealership"]||""; $("#fMSRP").value=r["MSRP ($)"]||"";
-          $("#fAmount").value=r["Agreed Amount ($)"]||""; $("#fMethod").value=r["Payment Method"]||""; $("#fStatus").value=r["Payment Status"]||"Pending";
-          $("#fTitleStatus").value=r["Title Status"]||"Not Received"; $("#fTitleDate").value=r["Title Received Date"]||"";
-          $("#fFloor").value=r["Floorplan"]||"None"; $("#fNotes").value=r["Notes"]||""; openModal();
-        }
-      });
+      sel.addEventListener("change",(e)=>{ const i=Number(e.target.dataset.idx); rows[i]["Payment Status"]=e.target.value; saveData(rows); renderAll(); toast("Status updated âœ“"); });
     });
     lucide.createIcons();
+    renderPagination(total, totalPages);
   }
   function renderKPIs(){
-    const total=rows.length,
-          cleared=rows.filter(r=>(r["Payment Status"]||"").toLowerCase()==="cleared").length,
-          pending=rows.filter(r=>(r["Payment Status"]||"").toLowerCase()==="pending").length,
-          totalValue=rows.reduce((s,r)=>s+Number(r["Agreed Amount ($)"]||0),0);
+    const total=rows.length, cleared=rows.filter(r=>(r["Payment Status"]||"").toLowerCase()==="cleared").length, pending=rows.filter(r=>(r["Payment Status"]||"").toLowerCase()==="pending").length, totalValue=rows.reduce((s,r)=>s+Number(r["Agreed Amount ($)"]||0),0);
     $("#kpiTotal").textContent=total; $("#kpiCleared").textContent=cleared; $("#kpiPending").textContent=pending; $("#kpiValue").textContent=fmtMoney(totalValue);
   }
   function renderAll(){ renderKPIs(); renderDealerOptions(); renderTable(); renderDealerSummary(); renderMonthlyTable(); renderMonthlyChart(); }
 
-  /* ===== Import / Export ===== */
+  /* ===== Import / Export (robust) ===== */
   // Excel serial date -> ISO YYYY-MM-DD
   function excelSerialToISO(v){
     if(v===undefined || v===null || v==="") return "";
@@ -361,7 +344,7 @@
       "Payment Method":["Payment Method","Method"],
       "Payment Status":["Payment Status","Status"],
       "Title Status":["Title Status","Title"],
-      "Title Received Date":["Title Received Date","Title Date"],
+      "Title Received Date":["Title Received Date","Title Date","Status Date"],
       "Floorplan":["Floorplan","Flooring","Lender"],
       "Notes":["Notes","Note","Comment"]
     };
@@ -374,107 +357,104 @@
     out["Title Received Date"]=excelSerialToISO(out["Title Received Date"]);
 
     // Numbers
-    const fix=(v)=>{ if(typeof v==="number") return v; const n=(v+"").replace(/[^0-9.\-]/g,""); return n?Number(n):0; };
+    const fix=(v)=>{ if(typeof v==="number") return v; const n=(v+"").replace(/[^0-9.\\-]/g,""); return n?Number(n):0; };
     out["Agreed Amount ($)"]=fix(out["Agreed Amount ($)"]); out["MSRP ($)"]=fix(out["MSRP ($)"]);
     out["Mileage"]=fix(out["Mileage"])||"";
 
     // Trim strings
     ["Year/Make/Model","VIN","Body Style","Selling Dealership","Payment Method","Payment Status","Title Status","Floorplan","Notes"].forEach(k=>{ if(out[k]!=="" && out[k]!==null) out[k]=(out[k]+"").trim(); });
 
+    // Body style inference if missing
+    function inferBodyStyle(model=""){
+      const s=(model||"").toLowerCase();
+      const has=(k)=>s.includes(k);
+      if(["suv","grand cherokee","cherokee","compass","explorer","escape","bronco","bronco sport","highlander","4runner","traverse","acadia","yukon","yukon xl","xt6","xt5","xt4","range rover","blazer","blazer ev","equinox","pathfinder","rogue","terrain"].some(has)) return "SUV";
+      if(["pickup","ram 1500","f-150","silverado","sierra","tacoma","tundra"].some(has)) return "Pickup";
+      if(["van","minivan","grand caravan","sienna","odyssey","transit"].some(has)) return "Van";
+      if(["camaro","mustang","challenger","corvette","coupe"].some(has)) return "Coupe";
+      if(["wagon","sportback"].some(has)) return "Wagon";
+      if(["sedan","malibu","charger","accord","civic","impala","altima","maxima","sentra","fusion","taurus","camry","avalon","sonata","elantra"," 300 "].some(has)) return "Sedan";
+      if(/\\bxt[456]\\b/.test(s)) return "SUV";
+      return "";
+    }
+    if(!out["Body Style"] || String(out["Body Style"]).trim()===""){
+      out["Body Style"]=inferBodyStyle(out["Year/Make/Model"]);
+    }
+
     return out;
   }
   function isRowEmpty(r){
-    const hasVIN=(r["VIN"]||"").trim()!==""; const hasModel=(r["Year/Make/Model"]||"").trim()!==""; const hasDealer=(r["Selling Dealership"]||"").trim()!==""; const hasAmount=Number(r["Agreed Amount ($)"]||0)>0;
+    const hasVIN=(r["VIN"]||"").trim()!=="";
+    const hasModel=(r["Year/Make/Model"]||"").trim()!=="";
+    const hasDealer=(r["Selling Dealership"]||"").trim()!=="";
+    const hasAmount=Number(r["Agreed Amount ($)"]||0)>0;
     const hasAny = hasVIN||hasModel||hasDealer||hasAmount||(r["Notes"]||"").trim()!=="";
     return !hasAny;
   }
-  function handleParsedRows(allRows){
-    const norm=allRows.map(normalizeRow).filter(r=>!isRowEmpty(r));
-    if(norm.length===0){ toast("No rows found. Ensure headers exist on the first row."); diag("Normalized rows = 0. Check headers."); return; }
-    rows=rows.concat(norm); saveData(rows); renderAll(); toast(`Imported ${norm.length} row(s).`); diag(`Imported ${norm.length} rows. Total now ${rows.length}.`);
-  }
 
-  function parseFile(file){
-    const name=(file.name||"").toLowerCase();
-    diag(`File selected: ${file.name} | size ${file.size} | type ${file.type}`);
-    if(!name.endsWith(".csv") && !name.endsWith(".xlsx") && !name.endsWith(".xls")){ $("#extHint").classList.remove("hidden"); return; } else { $("#extHint").classList.add("hidden"); }
+  $("#fileInput").addEventListener("change",(e)=>{
+    const f=e.target.files[0]; if(!f) return; const ext=f.name.split(".").pop().toLowerCase();
 
-    if(name.endsWith(".csv")){
-      Papa.parse(file,{header:true,skipEmptyLines:true,complete:(res)=>handleParsedRows(res.data),error:(e)=>{toast("CSV parse error."); diag("Papa error: "+(e?.message||e));}});
+    const append=(arr)=>{
+      const norm=arr.map(normalizeRow).filter(r=>!isRowEmpty(r));
+      rows=rows.concat(norm); saveData(rows); currentPage=1; renderAll(); toast(\`Imported \${norm.length} row(s).\`);
+    };
+
+    if(ext==="csv"){
+      Papa.parse(f,{header:true,skipEmptyLines:true,complete:(res)=>append(res.data)});
     } else {
       const r=new FileReader();
       r.onload=(evt)=>{
-        try{
-          const data=new Uint8Array(evt.target.result);
-          const wb=XLSX.read(data,{type:"array"});
-          let all=[];
-          wb.SheetNames.forEach(name=>{
-            const sheet=wb.Sheets[name];
-            const json=XLSX.utils.sheet_to_json(sheet,{defval:""});
-            all=all.concat(json);
-          });
-          handleParsedRows(all);
-        }catch(err){
-          toast("XLSX parse error."); diag("XLSX error: "+err);
-        }
+        const wb=XLSX.read(evt.target.result,{type:"binary"});
+        let all=[];
+        wb.SheetNames.forEach(name=>{
+          const sheet=wb.Sheets[name];
+          const data=XLSX.utils.sheet_to_json(sheet,{defval:""});
+          all=all.concat(data);
+        });
+        append(all);
       };
-      r.onerror=()=>{ toast("Read error."); diag("FileReader error"); };
-      r.readAsArrayBuffer(file);
+      r.readAsBinaryString(f);
     }
-  }
-
-  // File input
-  $("#fileInput").addEventListener("change",(e)=>{ const f=e.target.files?.[0]; if(f) parseFile(f); e.target.value=""; });
-
-  // Drag & Drop
-  const drop=$("#drop");
-  ["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,(e)=>{ e.preventDefault(); e.stopPropagation(); drop.classList.add("drag"); }));
-  ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,(e)=>{ e.preventDefault(); e.stopPropagation(); drop.classList.remove("drag"); }));
-  drop.addEventListener("drop",(e)=>{ const f=e.dataTransfer?.files?.[0]; if(f) parseFile(f); });
-
-  // Load "Car Acquisition Mahdi.xlsx" from same folder (works on GitHub Pages if the file is in the repo root with index.html)
-  $("#loadMahdi").addEventListener("click", async ()=>{
-    try{
-      const resp = await fetch("Car Acquisition Mahdi.xlsx");
-      if(!resp.ok){ toast("Couldn't find 'Car Acquisition Mahdi.xlsx' next to index.html."); diag("HTTP "+resp.status); return; }
-      const buf = await resp.arrayBuffer();
-      const wb = XLSX.read(buf, {type:"array"});
-      let all=[];
-      wb.SheetNames.forEach(name=>{
-        const sheet=wb.Sheets[name];
-        const json=XLSX.utils.sheet_to_json(sheet,{defval:""});
-        all=all.concat(json);
-      });
-      handleParsedRows(all);
-    }catch(err){
-      toast("Failed to load Mahdi Excel."); diag(err);
-    }
+    e.target.value="";
   });
 
-  // Add/Edit/Save
-  $("#addBtn").addEventListener("click",()=>{
-    editingIndex=null; $("#modalTitle").textContent="Add Vehicle";
-    $$("#modal input, #modal select").forEach(el=>el.value="");
-    $("#fTitleStatus").value="Not Received"; $("#fFloor").value="None"; $("#fStatus").value="Pending";
-    openModal();
+  $("#dlTemplate").addEventListener("click",()=>{
+    const headers=["Purchase Date","Year/Make/Model","VIN","Body Style","Mileage","Selling Dealership","MSRP ($)","Agreed Amount ($)","Payment Method","Payment Status","Title Status","Title Received Date","Floorplan","Notes"];
+    const csv=headers.join(",")+"\\n"; const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob);
+    const a=document.createElement("a"); a.href=url; a.download="vehicle_template.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
   });
+  $("#exportBtn").addEventListener("click",()=>{ if(rows.length===0){ alert("No data to export"); return; } const csv=Papa.unparse(rows); const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="vehicle_acquisitions.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); });
+  $("#exportJson").addEventListener("click",()=>{ const blob=new Blob([JSON.stringify(rows,null,2)],{type:"application/json"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="vehicle_acquisitions_backup.json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); });
+
+  /* ===== Add/Edit/Delete ===== */
+  $("#addBtn").addEventListener("click",()=>{ editingIndex=null; $("#modalTitle").textContent="Add Vehicle"; $$("#modal input, #modal select").forEach(el=>el.value=""); $("#fTitleStatus").value="Not Received"; $("#fFloor").value="None"; $("#fStatus").value="Pending"; openModal(); });
   $("#saveVehicle").addEventListener("click",()=>{
-    const row={
-      "Purchase Date":$("#fDate").value,"Year/Make/Model":$("#fModel").value,"VIN":$("#fVIN").value,"Body Style":$("#fBody").value,"Mileage":$("#fMileage").value,
+    const row={"Purchase Date":$("#fDate").value,"Year/Make/Model":$("#fModel").value,"VIN":$("#fVIN").value,"Body Style":$("#fBody").value,"Mileage":$("#fMileage").value,
       "Selling Dealership":$("#fDealer").value,"MSRP ($)":Number($("#fMSRP").value||0),"Agreed Amount ($)":Number($("#fAmount").value||0),
       "Payment Method":$("#fMethod").value,"Payment Status":$("#fStatus").value,"Title Status":$("#fTitleStatus").value||"Not Received","Title Received Date":$("#fTitleDate").value||"",
-      "Floorplan":$("#fFloor").value||"None","Notes":$("#fNotes").value
-    };
-    if(editingIndex===null){ rows.push(row); toast("Vehicle added ✓"); } else { rows[editingIndex]=row; editingIndex=null; toast("Vehicle updated ✓"); }
-    saveData(rows); renderAll(); closeModal();
+      "Floorplan":$("#fFloor").value||"None","Notes":$("#fNotes").value};
+    if(editingIndex===null){ rows.push(row); toast("Vehicle added âœ“"); } else { rows[editingIndex]=row; editingIndex=null; toast("Vehicle updated âœ“"); }
+    saveData(rows); currentPage=1; renderAll(); closeModal();
+  });
+  $("#tableBody").addEventListener("click",(e)=>{
+    const btn=e.target.closest("button[data-action]"); if(!btn) return; const idx=Number(btn.dataset.idx), act=btn.dataset.action;
+    if(act==="delete"){ rows.splice(idx,1); saveData(rows); renderAll(); toast("Deleted."); }
+    if(act==="edit"){ const r=rows[idx]; editingIndex=idx; $("#modalTitle").textContent="Edit Vehicle";
+      $("#fDate").value=r["Purchase Date"]||""; $("#fModel").value=r["Year/Make/Model"]||""; $("#fVIN").value=r["VIN"]||""; $("#fBody").value=r["Body Style"]||"";
+      $("#fMileage").value=r["Mileage"]||""; $("#fDealer").value=r["Selling Dealership"]||""; $("#fMSRP").value=r["MSRP ($)"]||"";
+      $("#fAmount").value=r["Agreed Amount ($)"]||""; $("#fMethod").value=r["Payment Method"]||""; $("#fStatus"].value=r["Payment Status"]||"Pending";
+      $("#fTitleStatus").value=r["Title Status"]||"Not Received"; $("#fTitleDate").value=r["Title Received Date"]||"";
+      $("#fFloor").value=r["Floorplan"]||"None"; $("#fNotes").value=r["Notes"]||""; openModal();
+    }
   });
 
   /* ===== Filter events & init ===== */
   ["searchInput","statusFilter","methodFilter","floorFilter","titleFilter","dealerFilter"].forEach(id=>{
-    $("#"+id).addEventListener("input", ()=>{ saveFilters(); renderTable(); renderDealerSummary(); });
-    $("#"+id).addEventListener("change",()=>{ saveFilters(); renderTable(); renderDealerSummary(); });
+    $("#"+id).addEventListener("input", ()=>{ currentPage=1; saveFilters(); renderTable(); renderDealerSummary(); });
+    $("#"+id).addEventListener("change",()=>{ currentPage=1; saveFilters(); renderTable(); renderDealerSummary(); });
   });
-  $("#clearFilters").addEventListener("click",()=>{ $("#searchInput").value=""; $("#statusFilter").value=""; $("#methodFilter").value=""; $("#floorFilter").value=""; $("#titleFilter").value=""; $("#dealerFilter").value=""; saveFilters(); renderAll(); });
+  $("#clearFilters").addEventListener("click",()=>{ $("#searchInput").value=""; $("#statusFilter").value=""; $("#methodFilter").value=""; $("#floorFilter").value=""; $("#titleFilter").value=""; $("#dealerFilter").value=""; currentPage=1; saveFilters(); renderAll(); });
 
   loadFilters();
   renderAll();
