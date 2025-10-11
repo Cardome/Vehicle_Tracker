@@ -16,7 +16,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <style>
-  /* ===== Background (put the .avif next to this file) ===== */
+  /* ===== Background ===== */
+  /* 1) Soft full-page background overlay (keeps UI readable) */
   body::before{
     content:"";
     position:fixed; inset:0; z-index:-2;
@@ -25,6 +26,24 @@
       url("1150-HP-Jeep-Grand-Cherokee-Trackhawk.avif") center/cover no-repeat fixed;
     filter:saturate(110%) contrast(102%);
   }
+  /* 2) Decorative corner art (fills the corner with the car image) */
+  body::after{
+    content:"";
+    position:fixed;
+    right:-40px; bottom:-40px; /* push a bit out so it looks tucked in the corner */
+    width:580px; height:380px;  /* desktop size */
+    background:url("1150-HP-Jeep-Grand-Cherokee-Trackhawk.avif") bottom right/contain no-repeat;
+    opacity:.16;
+    pointer-events:none;
+    z-index:-1;
+    filter:saturate(110%);
+  }
+  @media (max-width: 768px){
+    body::after{
+      width:320px; height:210px; right:-24px; bottom:-24px; opacity:.18;
+    }
+  }
+
   /* ===== UI polish ===== */
   .card{background:rgba(255,255,255,.92);backdrop-filter:saturate(150%) blur(6px);border:1px solid rgba(226,232,240,.85);border-radius:1rem;box-shadow:0 8px 28px rgba(2,6,23,.06);padding:1.2rem}
   .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:.8rem;padding:.6rem 1rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(15,23,42,.06)}
@@ -219,7 +238,7 @@
     const hay=[r.VIN,r["Year/Make/Model"],r["Selling Dealership"],r["Body Style"],r.Notes,r["Floorplan"]].map(x=>(x||"").toLowerCase()).join(" ");
     if(q && !hay.includes(q)) return false;
     if(st && (r["Payment Status"]||"")!==st) return false;
-    if(m  && (r["Payment Method"]||"")!==m) return false;
+    if	m  && (r["Payment Method"]||"")!==m) return false;
     if(fl && (r["Floorplan"]||"None")!==fl) return false;
     if(tt && (r["Title Status"]||"Not Received")!==tt) return false;
     if(dl && (r["Selling Dealership"]||"")!==dl) return false;
@@ -231,14 +250,14 @@
   function renderDealerOptions(){ const sel=$("#dealerFilter"), current=sel.value; const dealers=getDealers(rows); sel.innerHTML=`<option value="">Dealer: All</option>`+dealers.map(d=>`<option ${d===current?"selected":""}>${d}</option>`).join(""); }
   function computeDealerSummary(){
     const filtered=rows.filter(rowMatches); const map={};
-    filtered.forEach(r=>{ const d=(r["Selling Dealership"]||"").trim()||"—"; const amt=Number(r["Agreed Amount ($)"]||0); if(!map[d]) map[d]={count:0,total:0}; map[d].count++; map[d].total+=amt; });
+    filtered.forEach(r=>{ const d=(r["Selling Dealership"]||"").trim()||"â€”"; const amt=Number(r["Agreed Amount ($)"]||0); if(!map[d]) map[d]={count:0,total:0}; map[d].count++; map[d].total+=amt; });
     return Object.entries(map).map(([dealer,v])=>({dealer,...v,avg:v.count?v.total/v.count:0})).sort((a,b)=>b.total-a.total);
   }
   function renderDealerSummary(){
     const tb=$("#dealerBody"); tb.innerHTML=""; const arr=computeDealerSummary();
     if(arr.length===0){ tb.innerHTML=`<tr><td class="px-3 py-3 text-slate-400" colspan="4">No data.</td></tr>`; return; }
     let gc=0,gt=0; arr.forEach(s=>{ const tr=document.createElement("tr"); tr.innerHTML=`<td class="px-3 py-2">${s.dealer}</td><td class="px-3 py-2 font-semibold">${s.count}</td><td class="px-3 py-2 font-semibold">${fmtMoney(s.total)}</td><td class="px-3 py-2">${fmtMoney(s.avg)}</td>`; tb.appendChild(tr); gc+=s.count; gt+=s.total; });
-    const tr=document.createElement("tr"); tr.innerHTML=`<td class="px-3 py-2 font-bold">Total</td><td class="px-3 py-2 font-bold">${gc}</td><td class="px-3 py-2 font-bold">${fmtMoney(gt)}</td><td class="px-3 py-2">—</td>`; tb.appendChild(tr);
+    const tr=document.createElement("tr"); tr.innerHTML=`<td class="px-3 py-2 font-bold">Total</td><td class="px-3 py-2 font-bold">${gc}</td><td class="px-3 py-2 font-bold">${fmtMoney(gt)}</td><td class="px-3 py-2">â€”</td>`; tb.appendChild(tr);
   }
 
   /* ===== Monthly ===== */
@@ -248,8 +267,8 @@
 
   /* ===== Table ===== */
   const STATUSES=["Pending","Cleared","Paid"];
-  function pill(v){ const s=(v||"").toLowerCase(); const cls=s==="cleared"?"chip chip-emerald":s==="paid"?"chip chip-indigo":"chip chip-amber"; return `<span class="${cls}">${v||"—"}</span>`; }
-  function val(v){ return v ? v : `<span class="placeholder-cell">—</span>`; }
+  function pill(v){ const s=(v||"").toLowerCase(); const cls=s==="cleared"?"chip chip-emerald":s==="paid"?"chip chip-indigo":"chip chip-amber"; return `<span class="${cls}">${v||"â€”"}</span>`; }
+  function val(v){ return v ? v : `<span class="placeholder-cell">â€”</span>`; }
   function renderTable(){
     const tb=$("#tableBody"); tb.innerHTML=""; const visible=rows.filter(rowMatches); $("#emptyState").classList.toggle("hidden",visible.length>0);
     visible.forEach(r=>{ const idx=rows.indexOf(r); const tr=document.createElement("tr"); tr.className="fade-in";
@@ -375,7 +394,7 @@
       "Selling Dealership":$("#fDealer").value,"MSRP ($)":Number($("#fMSRP").value||0),"Agreed Amount ($)":Number($("#fAmount").value||0),
       "Payment Method":$("#fMethod").value,"Payment Status":$("#fStatus").value,"Title Status":$("#fTitleStatus").value||"Not Received","Title Received Date":$("#fTitleDate").value||"",
       "Floorplan":$("#fFloor").value||"None","Notes":$("#fNotes").value};
-    if(editingIndex===null){ rows.push(row); toast("Vehicle added ✓"); } else { rows[editingIndex]=row; editingIndex=null; toast("Vehicle updated ✓"); }
+    if(editingIndex===null){ rows.push(row); toast("Vehicle added âœ“"); } else { rows[editingIndex]=row; editingIndex=null; toast("Vehicle updated âœ“"); }
     saveData(rows); renderAll(); closeModal();
   });
   $("#tableBody").addEventListener("click",(e)=>{
@@ -385,7 +404,7 @@
       $("#fDate").value=r["Purchase Date"]||""; $("#fModel").value=r["Year/Make/Model"]||""; $("#fVIN").value=r["VIN"]||""; $("#fBody").value=r["Body Style"]||"";
       $("#fMileage").value=r["Mileage"]||""; $("#fDealer").value=r["Selling Dealership"]||""; $("#fMSRP").value=r["MSRP ($)"]||"";
       $("#fAmount").value=r["Agreed Amount ($)"]||""; $("#fMethod").value=r["Payment Method"]||""; $("#fStatus").value=r["Payment Status"]||"Pending";
-      $("#fTitleStatus").value=r["Title Status"]||"Not Received"; $("#fTitleDate").value=r["Title Received Date"]||"";
+      $("#fTitleStatus"].value=r["Title Status"]||"Not Received"; $("#fTitleDate").value=r["Title Received Date"]||"";
       $("#fFloor").value=r["Floorplan"]||"None"; $("#fNotes").value=r["Notes"]||""; openModal();
     }
   });
@@ -403,3 +422,4 @@
 </script>
 </body>
 </html>
+
