@@ -16,53 +16,48 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <style>
-  /* ===== Background (visible) ===== */
+  /* ===== Background ===== */
   body::before{
-    content:"";
-    position:fixed; inset:0; z-index:-2;
+    content:""; position:fixed; inset:0; z-index:-2;
     background:
-      linear-gradient(180deg, rgba(248,250,252,.82), rgba(248,250,252,.82)),
+      radial-gradient(1200px 600px at 10% -10%, rgba(59,130,246,.12), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(139,92,246,.12), transparent 60%),
+      linear-gradient(180deg, rgba(248,250,252,.85), rgba(248,250,252,.90)),
       url("1150-HP-Jeep-Grand-Cherokee-Trackhawk.avif") center/cover no-repeat fixed;
-    filter:saturate(135%) contrast(112%) brightness(107%);
+    filter:saturate(130%) contrast(108%) brightness(104%);
   }
+  /* Corner image (bigger “more showable” vehicle) */
   body::after{
-    content:"";
-    position:fixed;
-    right:-12px; bottom:-14px;
-    width:720px; height:460px;
+    content:""; position:fixed; right:-10px; bottom:-14px; width:760px; height:480px;
     background:url("1150-HP-Jeep-Grand-Cherokee-Trackhawk.avif") bottom right/contain no-repeat;
-    opacity:.42;
-    pointer-events:none;
-    z-index:-1;
-    filter:saturate(135%) contrast(112%);
+    opacity:.55; pointer-events:none; z-index:-1; filter:saturate(135%) contrast(112%);
   }
-  @media (max-width: 768px){
-    body::after{
-      width:380px; height:250px; right:-6px; bottom:-8px; opacity:.5;
-    }
-  }
+  @media (max-width: 1024px){ body::after{ width:560px; height:360px; opacity:.60; } }
+  @media (max-width: 768px){ body::after{ width:420px; height:280px; right:-6px; bottom:-8px; opacity:.65; } }
 
   /* ===== UI polish ===== */
-  .card{background:rgba(255,255,255,.94);backdrop-filter:saturate(150%) blur(6px);border:1px solid rgba(226,232,240,.85);border-radius:1rem;box-shadow:0 8px 28px rgba(2,6,23,.06);padding:1.2rem}
-  .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:.8rem;padding:.6rem 1rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(15,23,42,.06)}
+  .card{background:rgba(255,255,255,.96);backdrop-filter:saturate(160%) blur(8px);border:1px solid rgba(226,232,240,.85);border-radius:1.1rem;box-shadow:0 10px 30px rgba(2,6,23,.08);padding:1.2rem}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:.9rem;padding:.65rem 1rem;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(15,23,42,.08);transition:transform .08s ease}
+  .btn:active{transform:translateY(1px)}
   .btn-green{background:#059669;color:#fff}.btn-green:hover{background:#047857}
   .btn-blue{background:#2563eb;color:#fff}.btn-blue:hover{background:#1d4ed8}
   .btn-purple{background:#7c3aed;color:#fff}.btn-purple:hover{background:#6d28d9}
-  .btn-amber{background:#d97706;color:#fff}.btn-amber:hover{background:#b45309}
-  .chip{display:inline-flex;align-items:center;padding:.125rem .6rem;border-radius:9999px;font-size:.75rem;font-weight:700}
+  .btn-outline{background:#fff;color:#334155;border:1px solid #e2e8f0}
+  .chip{display:inline-flex;align-items:center;padding:.125rem .6rem;border-radius:9999px;font-size:.75rem;font-weight:800}
   .chip-amber{background:#fde68a;color:#92400e}.chip-emerald{background:#d1fae5;color:#065f46}.chip-indigo{background:#e0e7ff;color:#3730a3}
-  .input,.select{width:100%;border:1px solid #e2e8f0;border-radius:.9rem;padding:.7rem .9rem .7rem 2.35rem;background:#fff;outline:none}
+  .input,.select{width:100%;border:1px solid #e2e8f0;border-radius:1rem;padding:.7rem .95rem .7rem 2.35rem;background:#fff;outline:none}
   .input:focus,.select:focus{box-shadow:0 0 0 3px rgba(79,70,229,.25)}
   .filter-wrap{position:relative}.filter-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:#94a3b8}
-  tr:hover td{background:rgba(241,245,249,.55)}.fade-in{animation:fade .25s ease both}@keyframes fade{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:none}}
+  tr:hover td{background:rgba(241,245,249,.55)}.fade-in{animation:fade .3s ease both}@keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
   .placeholder-cell{color:#94a3b8}
   .hero{background:linear-gradient(120deg,#eef2ff 0%,#e6fffb 45%,#ecfeff 80%);border-bottom:1px solid rgba(226,232,240,.8)}
   .sticky-header{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#f8fafc 60%,rgba(248,250,252,0))}
-  .toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;border-radius:.75rem;padding:.7rem 1rem;box-shadow:0 8px 30px rgba(0,0,0,.2);opacity:0;transform:translateY(10px);transition:all .2s}
+  thead th{position:sticky;top:0;background:#f8fafc}
+  .toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;border-radius:.9rem;padding:.7rem 1rem;box-shadow:0 8px 30px rgba(0,0,0,.2);opacity:0;transform:translateY(10px);transition:all .2s}
   .toast.show{opacity:1;transform:none}
   .modal-root{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.4);padding:1rem}
-  .modal-root.flex{display:flex}.modal-panel{background:#fff;border-radius:1rem;box-shadow:0 20px 60px rgba(0,0,0,.25);width:100%;max-width:48rem;max-height:85vh;overflow:auto;padding:1.5rem}
-  .hint{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;border-radius:.75rem;padding:.5rem .75rem;font-size:.85rem}
+  .modal-root.flex{display:flex}.modal-panel{background:#fff;border-radius:1rem;box-shadow:0 20px 60px rgba(0,0,0,.22);width:100%;max-width:48rem;max-height:85vh;overflow:auto;padding:1.5rem}
+  .hint{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;border-radius:.9rem;padding:.6rem .9rem;font-size:.9rem}
   .dz{border:2px dashed #cbd5e1;border-radius:1rem;padding:1rem;display:flex;gap:.75rem;align-items:center;justify-content:center;background:#f8fafc}
   .dz.drag{background:#eef2ff;border-color:#a5b4fc}
   .diag{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;background:#0b1220;color:#e5e7eb;border-radius:.75rem;padding:.75rem;white-space:pre-wrap}
@@ -73,9 +68,9 @@
   <!-- Header -->
   <div class="sticky-header">
     <div class="hero">
-      <div class="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between">
+      <div class="max-w-7xl mx-auto px-4 py-5 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <img src="logo.png" class="h-12 w-auto object-contain" alt="Logo" onerror="this.style.display='none'">
+          <img src="logo.png" class="h-12 w-auto object-contain rounded" alt="Logo" onerror="this.style.display='none'">
           <div class="leading-tight">
             <h1 class="text-3xl md:text-4xl font-black tracking-tight">Vehicle Acquisition Tracker</h1>
             <p class="text-slate-500">Manage and track your vehicle purchases</p>
@@ -85,27 +80,24 @@
           <label class="btn btn-green cursor-pointer"><i data-lucide="upload"></i><span class="hidden sm:inline">Import CSV/XLSX</span>
             <input id="fileInput" type="file" accept=".csv,.xlsx,.xls" class="hidden">
           </label>
+          <button id="loadMahdi" class="btn btn-outline"><i data-lucide="database"></i><span class="hidden md:inline">Load Mahdi Excel</span></button>
           <button id="dlTemplate" class="btn btn-blue"><i data-lucide="file-down"></i><span class="hidden sm:inline">CSV Template</span></button>
           <button id="exportBtn" class="btn btn-blue"><i data-lucide="download"></i><span class="hidden sm:inline">Export CSV</span></button>
           <button id="exportJson" class="btn btn-blue"><i data-lucide="braces"></i><span class="hidden sm:inline">Backup JSON</span></button>
           <button id="addBtn" class="btn btn-purple"><i data-lucide="plus"></i><span class="hidden sm:inline">Add Vehicle</span></button>
-          <button id="loadDemo" class="btn btn-amber"><i data-lucide="rocket"></i><span class="hidden sm:inline">Load Demo Data</span></button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Content -->
-  <div class="max-w-6xl mx-auto px-4 py-6">
-
-    <div id="extHint" class="hint mb-4 hidden">
-      âš ï¸ Your file seems to be <b>.tsx</b> or not a spreadsheet. Please use <b>.xlsx</b> or <b>.csv</b>.
-    </div>
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <div id="extHint" class="hint mb-4 hidden">⚠️ That file doesn't look like a spreadsheet. Please import a <b>.xlsx</b> or <b>.csv</b>.</div>
 
     <!-- Drag & Drop -->
     <div id="drop" class="dz mb-4">
       <i data-lucide="file-input" class="w-5 h-5 text-slate-500"></i>
-      <span class="text-slate-600">Drag a <b>.xlsx</b> or <b>.csv</b> here, or use â€œImport CSV/XLSXâ€.</span>
+      <span class="text-slate-600">Drag a <b>.xlsx</b> or <b>.csv</b> here, or use “Import CSV/XLSX”.</span>
     </div>
 
     <!-- Diagnostics -->
@@ -142,7 +134,7 @@
         <div class="filter-wrap"><i data-lucide="store" class="filter-icon"></i>
           <select id="dealerFilter" class="select"><option value="">Dealer: All</option></select>
         </div>
-        <div class="flex items-stretch"><button id="clearFilters" class="btn w-full" style="background:#eef2f7"><i data-lucide="eraser"></i>Clear</button></div>
+        <div class="flex items-stretch"><button id="clearFilters" class="btn w-full btn-outline"><i data-lucide="eraser"></i>Clear</button></div>
       </div>
 
       <div class="overflow-x-auto mt-4">
@@ -223,7 +215,7 @@
 <script>
   /* ===== Helpers & State ===== */
   const $=(s)=>document.querySelector(s), $$=(s)=>Array.from(document.querySelectorAll(s));
-  const LS_KEY="vat_data_v6", FILTERS_KEY="vat_filters_v3";
+  const LS_KEY="vat_data_v7", FILTERS_KEY="vat_filters_v3"; // <- NEW version key
   let rows=loadData(), monthlyChart, editingIndex=null;
   const diag=(msg)=>{ const el=$("#diag"); el.textContent=String(msg); console.log("[diag]", msg); }
 
@@ -231,7 +223,7 @@
   function saveData(v){ localStorage.setItem(LS_KEY, JSON.stringify(v)); }
   function fmtMoney(n){ const x=Number(n||0); return x.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:0}); }
   function ym(dstr){ const d=new Date(dstr); return isNaN(d)?"":d.toISOString().slice(0,7); }
-  function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2600); }
+  function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2800); }
 
   /* ===== Modal ===== */
   function openModal(){ $("#modal").classList.add("flex"); document.body.style.overflow="hidden"; }
@@ -272,14 +264,14 @@
   function renderDealerOptions(){ const sel=$("#dealerFilter"), current=sel.value; const dealers=getDealers(rows); sel.innerHTML=`<option value="">Dealer: All</option>`+dealers.map(d=>`<option ${d===current?"selected":""}>${d}</option>`).join(""); }
   function computeDealerSummary(){
     const filtered=rows.filter(rowMatches); const map={};
-    filtered.forEach(r=>{ const d=(r["Selling Dealership"]||"").trim()||"â€”"; const amt=Number(r["Agreed Amount ($)"]||0); if(!map[d]) map[d]={count:0,total:0}; map[d].count++; map[d].total+=amt; });
+    filtered.forEach(r=>{ const d=(r["Selling Dealership"]||"").trim()||"—"; const amt=Number(r["Agreed Amount ($)"]||0); if(!map[d]) map[d]={count:0,total:0}; map[d].count++; map[d].total+=amt; });
     return Object.entries(map).map(([dealer,v])=>({dealer,...v,avg:v.count?v.total/v.count:0})).sort((a,b)=>b.total-a.total);
   }
   function renderDealerSummary(){
     const tb=$("#dealerBody"); tb.innerHTML=""; const arr=computeDealerSummary();
     if(arr.length===0){ tb.innerHTML=`<tr><td class="px-3 py-3 text-slate-400" colspan="4">No data.</td></tr>`; return; }
     let gc=0,gt=0; arr.forEach(s=>{ const tr=document.createElement("tr"); tr.innerHTML=`<td class="px-3 py-2">${s.dealer}</td><td class="px-3 py-2 font-semibold">${s.count}</td><td class="px-3 py-2 font-semibold">${fmtMoney(s.total)}</td><td class="px-3 py-2">${fmtMoney(s.avg)}</td>`; tb.appendChild(tr); gc+=s.count; gt+=s.total; });
-    const tr=document.createElement("tr"); tr.innerHTML=`<td class="px-3 py-2 font-bold">Total</td><td class="px-3 py-2 font-bold">${gc}</td><td class="px-3 py-2 font-bold">${fmtMoney(gt)}</td><td class="px-3 py-2">â€”</td>`; tb.appendChild(tr);
+    const tr=document.createElement("tr"); tr.innerHTML=`<td class="px-3 py-2 font-bold">Total</td><td class="px-3 py-2 font-bold">${gc}</td><td class="px-3 py-2 font-bold">${fmtMoney(gt)}</td><td class="px-3 py-2">—</td>`; tb.appendChild(tr);
   }
 
   /* ===== Monthly ===== */
@@ -289,11 +281,11 @@
 
   /* ===== Table ===== */
   const STATUSES=["Pending","Cleared","Paid"];
-  function pill(v){ const s=(v||"").toLowerCase(); const cls=s==="cleared"?"chip chip-emerald":s==="paid"?"chip chip-indigo":"chip chip-amber"; return `<span class="${cls}">${v||"â€”"}</span>`; }
-  function val(v){ return v ? v : `<span class="placeholder-cell">â€”</span>`; }
+  function pill(v){ const s=(v||"").toLowerCase(); const cls=s==="cleared"?"chip chip-emerald":s==="paid"?"chip chip-indigo":"chip chip-amber"; return `<span class="${cls}">${v||"—"}</span>`; }
+  function val(v){ return v ? v : `<span class="placeholder-cell">—</span>`; }
   function renderTable(){
     const tb=$("#tableBody"); tb.innerHTML=""; const visible=rows.filter(rowMatches); $("#emptyState").classList.toggle("hidden",visible.length>0);
-    visible.forEach(r=>{ const idx=rows.indexOf(r); const tr=document.createElement("tr"); tr.className="fade-in";
+    visible.forEach((r)=>{ const idx=rows.indexOf(r); const tr=document.createElement("tr"); tr.className="fade-in";
       tr.innerHTML=`
         <td class="px-3 py-2">${val(r["Purchase Date"])}</td>
         <td class="px-3 py-2">${val(r["Year/Make/Model"])}</td>
@@ -309,21 +301,48 @@
         <td class="px-3 py-2">${val(r["Title Received Date"])}</td>
         <td class="px-3 py-2">${val(r["Floorplan"]||"None")}</td>
         <td class="px-3 py-2">${val(r["Notes"])}</td>
-        <td class="px-3 py-2 text-right"><button class="text-slate-400 hover:text-blue-600" data-idx="${idx}" data-action="edit" title="Edit"><i data-lucide="pencil"></i></button><button class="text-slate-400 hover:text-red-500 ml-2" data-idx="${idx}" data-action="delete" title="Delete"><i data-lucide="trash-2"></i></button></td>`;
+        <td class="px-3 py-2 text-right">
+          <button class="text-slate-500 hover:text-blue-600" data-idx="${idx}" data-action="edit" title="Edit"><i data-lucide="pencil"></i></button>
+          <button class="text-slate-500 hover:text-red-500 ml-2" data-idx="${idx}" data-action="delete" title="Delete"><i data-lucide="trash-2"></i></button>
+        </td>`;
       tb.appendChild(tr);
     });
+    // Inline status change
     tb.querySelectorAll("select[title='Change status']").forEach(sel=>{
-      sel.addEventListener("change",(e)=>{ const i=Number(e.target.dataset.idx); rows[i]["Payment Status"]=e.target.value; saveData(rows); renderTable(); renderKPIs(); });
+      sel.addEventListener("change",(e)=>{ const i=Number(e.target.dataset.idx); if(i>=0){ rows[i]["Payment Status"]=e.target.value; saveData(rows); renderTable(); renderKPIs(); }});
+    });
+    // Edit / Delete (event handlers bound per render)
+    tb.querySelectorAll("button[data-action]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const i=Number(btn.dataset.idx); const act=btn.dataset.action;
+        if(!(i>=0)) return;
+        if(act==="delete"){
+          if(confirm("Delete this vehicle? This cannot be undone.")){
+            rows.splice(i,1); saveData(rows); renderAll(); toast("Deleted.");
+          }
+        } else if(act==="edit"){
+          const r=rows[i]; editingIndex=i; $("#modalTitle").textContent="Edit Vehicle";
+          $("#fDate").value=r["Purchase Date"]||""; $("#fModel").value=r["Year/Make/Model"]||""; $("#fVIN").value=r["VIN"]||""; $("#fBody").value=r["Body Style"]||"";
+          $("#fMileage").value=r["Mileage"]||""; $("#fDealer").value=r["Selling Dealership"]||""; $("#fMSRP").value=r["MSRP ($)"]||"";
+          $("#fAmount").value=r["Agreed Amount ($)"]||""; $("#fMethod").value=r["Payment Method"]||""; $("#fStatus").value=r["Payment Status"]||"Pending";
+          $("#fTitleStatus").value=r["Title Status"]||"Not Received"; $("#fTitleDate").value=r["Title Received Date"]||"";
+          $("#fFloor").value=r["Floorplan"]||"None"; $("#fNotes").value=r["Notes"]||""; openModal();
+        }
+      });
     });
     lucide.createIcons();
   }
   function renderKPIs(){
-    const total=rows.length, cleared=rows.filter(r=>(r["Payment Status"]||"").toLowerCase()==="cleared").length, pending=rows.filter(r=>(r["Payment Status"]||"").toLowerCase()==="pending").length, totalValue=rows.reduce((s,r)=>s+Number(r["Agreed Amount ($)"]||0),0);
+    const total=rows.length,
+          cleared=rows.filter(r=>(r["Payment Status"]||"").toLowerCase()==="cleared").length,
+          pending=rows.filter(r=>(r["Payment Status"]||"").toLowerCase()==="pending").length,
+          totalValue=rows.reduce((s,r)=>s+Number(r["Agreed Amount ($)"]||0),0);
     $("#kpiTotal").textContent=total; $("#kpiCleared").textContent=cleared; $("#kpiPending").textContent=pending; $("#kpiValue").textContent=fmtMoney(totalValue);
   }
   function renderAll(){ renderKPIs(); renderDealerOptions(); renderTable(); renderDealerSummary(); renderMonthlyTable(); renderMonthlyChart(); }
 
-  /* ===== Import (drag+drop and input) ===== */
+  /* ===== Import / Export ===== */
+  // Excel serial date -> ISO YYYY-MM-DD
   function excelSerialToISO(v){
     if(v===undefined || v===null || v==="") return "";
     if(typeof v==="number"){ const epoch = new Date(Date.UTC(1899,11,30)); const ms=v*86400000; const d=new Date(epoch.getTime()+ms); return isNaN(d)? "": d.toISOString().slice(0,10); }
@@ -349,24 +368,27 @@
     const out={};
     for(const k in map){ out[k]=""; for(const c of map[k]){ if(obj[c]!==undefined && obj[c]!==null){ out[k]=obj[c]; break; } } }
     if(!out["Floorplan"]) out["Floorplan"]="None"; if(!out["Title Status"]) out["Title Status"]="Not Received";
+
+    // Dates
     out["Purchase Date"]=excelSerialToISO(out["Purchase Date"]);
     out["Title Received Date"]=excelSerialToISO(out["Title Received Date"]);
+
+    // Numbers
     const fix=(v)=>{ if(typeof v==="number") return v; const n=(v+"").replace(/[^0-9.\-]/g,""); return n?Number(n):0; };
     out["Agreed Amount ($)"]=fix(out["Agreed Amount ($)"]); out["MSRP ($)"]=fix(out["MSRP ($)"]);
     out["Mileage"]=fix(out["Mileage"])||"";
+
+    // Trim strings
     ["Year/Make/Model","VIN","Body Style","Selling Dealership","Payment Method","Payment Status","Title Status","Floorplan","Notes"].forEach(k=>{ if(out[k]!=="" && out[k]!==null) out[k]=(out[k]+"").trim(); });
+
     return out;
   }
   function isRowEmpty(r){
-    const hasVIN=(r["VIN"]||"").trim()!=="";
-    const hasModel=(r["Year/Make/Model"]||"").trim()!=="";
-    const hasDealer=(r["Selling Dealership"]||"").trim()!=="";
-    const hasAmount=Number(r["Agreed Amount ($)"]||0)>0;
+    const hasVIN=(r["VIN"]||"").trim()!==""; const hasModel=(r["Year/Make/Model"]||"").trim()!==""; const hasDealer=(r["Selling Dealership"]||"").trim()!==""; const hasAmount=Number(r["Agreed Amount ($)"]||0)>0;
     const hasAny = hasVIN||hasModel||hasDealer||hasAmount||(r["Notes"]||"").trim()!=="";
     return !hasAny;
   }
   function handleParsedRows(allRows){
-    diag(`Parsed rows (raw): ${allRows.length}`);
     const norm=allRows.map(normalizeRow).filter(r=>!isRowEmpty(r));
     if(norm.length===0){ toast("No rows found. Ensure headers exist on the first row."); diag("Normalized rows = 0. Check headers."); return; }
     rows=rows.concat(norm); saveData(rows); renderAll(); toast(`Imported ${norm.length} row(s).`); diag(`Imported ${norm.length} rows. Total now ${rows.length}.`);
@@ -375,14 +397,11 @@
   function parseFile(file){
     const name=(file.name||"").toLowerCase();
     diag(`File selected: ${file.name} | size ${file.size} | type ${file.type}`);
-    if(name.endsWith(".tsx") || (!name.endsWith(".csv") && !name.endsWith(".xlsx") && !name.endsWith(".xls"))){
-      $("#extHint").classList.remove("hidden");
-    } else {
-      $("#extHint").classList.add("hidden");
-    }
+    if(!name.endsWith(".csv") && !name.endsWith(".xlsx") && !name.endsWith(".xls")){ $("#extHint").classList.remove("hidden"); return; } else { $("#extHint").classList.add("hidden"); }
+
     if(name.endsWith(".csv")){
       Papa.parse(file,{header:true,skipEmptyLines:true,complete:(res)=>handleParsedRows(res.data),error:(e)=>{toast("CSV parse error."); diag("Papa error: "+(e?.message||e));}});
-    } else if(name.endsWith(".xlsx") || name.endsWith(".xls")){
+    } else {
       const r=new FileReader();
       r.onload=(evt)=>{
         try{
@@ -399,14 +418,12 @@
           toast("XLSX parse error."); diag("XLSX error: "+err);
         }
       };
-      r.onerror=(e)=>{ toast("Read error."); diag("FileReader error"); };
+      r.onerror=()=>{ toast("Read error."); diag("FileReader error"); };
       r.readAsArrayBuffer(file);
-    } else {
-      toast("Unsupported file. Use .csv or .xlsx"); diag("Unsupported extension.");
     }
   }
 
-  // Input
+  // File input
   $("#fileInput").addEventListener("change",(e)=>{ const f=e.target.files?.[0]; if(f) parseFile(f); e.target.value=""; });
 
   // Drag & Drop
@@ -415,14 +432,41 @@
   ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,(e)=>{ e.preventDefault(); e.stopPropagation(); drop.classList.remove("drag"); }));
   drop.addEventListener("drop",(e)=>{ const f=e.dataTransfer?.files?.[0]; if(f) parseFile(f); });
 
-  // Load demo data
-  $("#loadDemo").addEventListener("click",()=>{
-    const demo=[
-      {"Purchase Date":"2025-02-01","Year/Make/Model":"2018 Toyota Camry","VIN":"4T1BF1FK0JU000001","Body Style":"Sedan","Mileage":65000,"Selling Dealership":"ABC Motors","MSRP ($)":23000,"Agreed Amount ($)":14500,"Payment Method":"Wire","Payment Status":"Cleared","Title Status":"Received","Title Received Date":"2025-02-10","Floorplan":"None","Notes":"Clean title"},
-      {"Purchase Date":"2025-03-05","Year/Make/Model":"2019 Honda CR-V","VIN":"2HKRW2H52KH000002","Body Style":"SUV","Mileage":42000,"Selling Dealership":"Westside Auto","MSRP ($)":27000,"Agreed Amount ($)":18200,"Payment Method":"Check","Payment Status":"Pending","Title Status":"Not Received","Title Received Date":"","Floorplan":"NextGear","Notes":""},
-      {"Purchase Date":"2025-04-18","Year/Make/Model":"2017 Ford F-150","VIN":"1FTEW1EP3HFA00003","Body Style":"Pickup","Mileage":88000,"Selling Dealership":"Metro Trucks","MSRP ($)":35000,"Agreed Amount ($)":21000,"Payment Method":"Cashier Check","Payment Status":"Cleared","Title Status":"Received","Title Received Date":"2025-04-25","Floorplan":"AFC","Notes":"Minor scratches"}
-    ];
-    handleParsedRows(demo);
+  // Load "Car Acquisition Mahdi.xlsx" from same folder (works on GitHub Pages if the file is in the repo root with index.html)
+  $("#loadMahdi").addEventListener("click", async ()=>{
+    try{
+      const resp = await fetch("Car Acquisition Mahdi.xlsx");
+      if(!resp.ok){ toast("Couldn't find 'Car Acquisition Mahdi.xlsx' next to index.html."); diag("HTTP "+resp.status); return; }
+      const buf = await resp.arrayBuffer();
+      const wb = XLSX.read(buf, {type:"array"});
+      let all=[];
+      wb.SheetNames.forEach(name=>{
+        const sheet=wb.Sheets[name];
+        const json=XLSX.utils.sheet_to_json(sheet,{defval:""});
+        all=all.concat(json);
+      });
+      handleParsedRows(all);
+    }catch(err){
+      toast("Failed to load Mahdi Excel."); diag(err);
+    }
+  });
+
+  // Add/Edit/Save
+  $("#addBtn").addEventListener("click",()=>{
+    editingIndex=null; $("#modalTitle").textContent="Add Vehicle";
+    $$("#modal input, #modal select").forEach(el=>el.value="");
+    $("#fTitleStatus").value="Not Received"; $("#fFloor").value="None"; $("#fStatus").value="Pending";
+    openModal();
+  });
+  $("#saveVehicle").addEventListener("click",()=>{
+    const row={
+      "Purchase Date":$("#fDate").value,"Year/Make/Model":$("#fModel").value,"VIN":$("#fVIN").value,"Body Style":$("#fBody").value,"Mileage":$("#fMileage").value,
+      "Selling Dealership":$("#fDealer").value,"MSRP ($)":Number($("#fMSRP").value||0),"Agreed Amount ($)":Number($("#fAmount").value||0),
+      "Payment Method":$("#fMethod").value,"Payment Status":$("#fStatus").value,"Title Status":$("#fTitleStatus").value||"Not Received","Title Received Date":$("#fTitleDate").value||"",
+      "Floorplan":$("#fFloor").value||"None","Notes":$("#fNotes").value
+    };
+    if(editingIndex===null){ rows.push(row); toast("Vehicle added ✓"); } else { rows[editingIndex]=row; editingIndex=null; toast("Vehicle updated ✓"); }
+    saveData(rows); renderAll(); closeModal();
   });
 
   /* ===== Filter events & init ===== */
@@ -438,4 +482,3 @@
 </script>
 </body>
 </html>
-
