@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vehicle Acquisition Tracker</title>
 
-  <!-- Tailwind (utilities) -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -14,67 +14,37 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <!-- EmailJS (optional) -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
   <style>
-    /* Glass cards */
-    .card{
-      background:rgba(255,255,255,.9);
-      backdrop-filter:saturate(150%) blur(6px);
-      border:1px solid rgba(226,232,240,.85);
-      border-radius:1rem;
-      box-shadow:0 8px 28px rgba(2,6,23,.06);
-      padding:1.2rem;
-    }
-
-    /* Buttons */
-    .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:.8rem;padding:.6rem 1rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(15,23,42,.06);transition:transform .05s ease}
-    .btn:active{transform:translateY(1px)}
+    /* ===== UI polish (same vibe you have) ===== */
+    .card{background:rgba(255,255,255,.9);backdrop-filter:saturate(150%) blur(6px);border:1px solid rgba(226,232,240,.85);border-radius:1rem;box-shadow:0 8px 28px rgba(2,6,23,.06);padding:1.2rem}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:.8rem;padding:.6rem 1rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(15,23,42,.06)}
     .btn-green{background:#059669;color:#fff}.btn-green:hover{background:#047857}
     .btn-blue{background:#2563eb;color:#fff}.btn-blue:hover{background:#1d4ed8}
     .btn-purple{background:#7c3aed;color:#fff}.btn-purple:hover{background:#6d28d9}
-
-    /* Chips */
     .chip{display:inline-flex;align-items:center;padding:.125rem .6rem;border-radius:9999px;font-size:.75rem;font-weight:700}
-    .chip-amber{background:#fde68a;color:#92400e}
-    .chip-emerald{background:#d1fae5;color:#065f46}
-    .chip-indigo{background:#e0e7ff;color:#3730a3}
-
-    /* Inputs */
+    .chip-amber{background:#fde68a;color:#92400e}.chip-emerald{background:#d1fae5;color:#065f46}.chip-indigo{background:#e0e7ff;color:#3730a3}
     .input,.select{width:100%;border:1px solid #e2e8f0;border-radius:.9rem;padding:.7rem .9rem .7rem 2.35rem;background:#fff;outline:none}
     .input:focus,.select:focus{box-shadow:0 0 0 3px rgba(79,70,229,.25)}
-    .filter-wrap{position:relative}
-    .filter-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:#94a3b8}
-
-    /* Animations / polish */
-    tr:hover td{background:rgba(241,245,249,.55)}
-    .fade-in{animation:fade .25s ease both}
-    @keyframes fade{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:none}}
+    .filter-wrap{position:relative}.filter-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:#94a3b8}
+    tr:hover td{background:rgba(241,245,249,.55)}.fade-in{animation:fade .25s ease both}@keyframes fade{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:none}}
     .placeholder-cell{color:#94a3b8}
-
-    /* Header */
-    .hero{background:linear-gradient(120deg,#eef2ff 0%,#e6fffb 45%,#ecfeff 80%); border-bottom:1px solid rgba(226,232,240,.8)}
+    .hero{background:linear-gradient(120deg,#eef2ff 0%,#e6fffb 45%,#ecfeff 80%);border-bottom:1px solid rgba(226,232,240,.8)}
     .sticky-header{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#f8fafc 60%,rgba(248,250,252,0))}
-
-    /* Toast */
     .toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;border-radius:.75rem;padding:.7rem 1rem;box-shadow:0 8px 30px rgba(0,0,0,.2);opacity:0;transform:translateY(10px);transition:all .2s}
     .toast.show{opacity:1;transform:none}
-
-    /* Modal */
     .modal-root{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.4);padding:1rem}
-    .modal-root.flex{display:flex}
-    .modal-panel{background:#fff;border-radius:1rem;box-shadow:0 20px 60px rgba(0,0,0,.25);width:100%;max-width:48rem;max-height:85vh;overflow:auto;padding:1.5rem}
+    .modal-root.flex{display:flex}.modal-panel{background:#fff;border-radius:1rem;box-shadow:0 20px 60px rgba(0,0,0,.25);width:100%;max-width:48rem;max-height:85vh;overflow:auto;padding:1.5rem}
   </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900">
-  <!-- HEADER -->
+  <!-- Header -->
   <div class="sticky-header">
     <div class="hero">
       <div class="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <img src="logo.png" alt="CarDome Auto Sales" class="h-12 w-auto object-contain" onerror="this.style.display='none'">
+          <img src="logo.png" class="h-12 w-auto object-contain" alt="Logo" onerror="this.style.display='none'">
           <div class="leading-tight">
             <h1 class="text-3xl md:text-4xl font-black tracking-tight">Vehicle Acquisition Tracker</h1>
             <p class="text-slate-500">Manage and track your vehicle purchases</p>
@@ -82,7 +52,7 @@
         </div>
         <div class="flex flex-wrap gap-2">
           <label class="btn btn-green cursor-pointer"><i data-lucide="upload"></i><span class="hidden sm:inline">Import CSV/XLSX</span>
-            <input id="fileInput" type="file" accept=".csv,.xlsx,.xls" class="hidden" />
+            <input id="fileInput" type="file" accept=".csv,.xlsx,.xls" class="hidden">
           </label>
           <button id="dlTemplate" class="btn btn-blue"><i data-lucide="file-down"></i><span class="hidden sm:inline">CSV Template</span></button>
           <button id="exportBtn" class="btn btn-blue"><i data-lucide="download"></i><span class="hidden sm:inline">Export CSV</span></button>
@@ -93,21 +63,23 @@
     </div>
   </div>
 
-  <!-- CONTENT -->
+  <!-- Content -->
   <div class="max-w-6xl mx-auto px-4 py-6">
     <!-- KPIs -->
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="card flex justify-between items-center fade-in"><div><p class="text-slate-500">Total Vehicles</p><div id="kpiTotal" class="text-4xl font-extrabold mt-1">0</div></div><i data-lucide="car" class="w-8 h-8 text-blue-500 opacity-90 drop-shadow"></i></div>
-      <div class="card flex justify-between items-center fade-in"><div><p class="text-slate-500">Cleared</p><div id="kpiCleared" class="text-4xl font-extrabold mt-1">0</div></div><i data-lucide="trending-up" class="w-8 h-8 text-emerald-500 opacity-90 drop-shadow"></i></div>
-      <div class="card flex justify-between items-center fade-in"><div><p class="text-slate-500">Pending</p><div id="kpiPending" class="text-4xl font-extrabold mt-1">0</div></div><i data-lucide="calendar" class="w-8 h-8 text-amber-500 opacity-90 drop-shadow"></i></div>
-      <div class="card flex justify-between items-center fade-in"><div><p class="text-slate-500">Total Value</p><div id="kpiValue" class="text-4xl font-extrabold mt-1">$0</div></div><i data-lucide="dollar-sign" class="w-8 h-8 text-purple-500 opacity-90 drop-shadow"></i></div>
+      <div class="card flex justify-between items-center fade-in"><div><p class="text-slate-500">Total Vehicles</p><div id="kpiTotal" class="text-4xl font-extrabold mt-1">0</div></div><i data-lucide="car" class="w-8 h-8 text-blue-500"></i></div>
+      <div class="card flex justify-between items-center fade-in"><div><p class="text-slate-500">Cleared</p><div id="kpiCleared" class="text-4xl font-extrabold mt-1">0</div></div><i data-lucide="trending-up" class="w-8 h-8 text-emerald-500"></i></div>
+      <div class="card flex justify-between items-center fade-in"><div><p class="text-slate-500">Pending</p><div id="kpiPending" class="text-4xl font-extrabold mt-1">0</div></div><i data-lucide="calendar" class="w-8 h-8 text-amber-500"></i></div>
+      <div class="card flex justify-between items-center fade-in"><div><p class="text-slate-500">Total Value</p><div id="kpiValue" class="text-4xl font-extrabold mt-1">$0</div></div><i data-lucide="dollar-sign" class="w-8 h-8 text-purple-500"></i></div>
     </div>
 
     <!-- Filters + Table -->
     <div class="card mt-6 fade-in">
       <div class="mb-3 text-slate-500 font-medium">Filters</div>
-      <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
-        <div class="filter-wrap"><i data-lucide="search" class="filter-icon"></i><input id="searchInput" class="input" placeholder="Search VIN, model, dealer, notes..." /></div>
+
+      <!-- NOTE: increased to 7 cols to fit Dealer filter -->
+      <div class="grid grid-cols-1 md:grid-cols-7 gap-3">
+        <div class="filter-wrap"><i data-lucide="search" class="filter-icon"></i><input id="searchInput" class="input" placeholder="Search VIN, model, dealer, notes..."></div>
         <div class="filter-wrap"><i data-lucide="badge-check" class="filter-icon"></i>
           <select id="statusFilter" class="select"><option value="">Status: All</option><option>Pending</option><option>Cleared</option><option>Paid</option></select>
         </div>
@@ -120,11 +92,15 @@
         <div class="filter-wrap"><i data-lucide="file-text" class="filter-icon"></i>
           <select id="titleFilter" class="select"><option value="">Title: All</option><option>Not Received</option><option>Received</option><option>Branded</option></select>
         </div>
+        <!-- Dealer filter -->
+        <div class="filter-wrap"><i data-lucide="store" class="filter-icon"></i>
+          <select id="dealerFilter" class="select"><option value="">Dealer: All</option></select>
+        </div>
         <div class="flex items-stretch"><button id="clearFilters" class="btn w-full" style="background:#eef2f7"><i data-lucide="eraser"></i>Clear</button></div>
       </div>
 
       <div class="overflow-x-auto mt-4">
-        <table class="min-w-full text-sm transition-all">
+        <table class="min-w-full text-sm">
           <thead class="bg-slate-50">
             <tr class="text-left">
               <th class="px-3 py-2">Date</th>
@@ -147,6 +123,27 @@
           <tbody id="tableBody" class="divide-y divide-slate-100"></tbody>
         </table>
         <div id="emptyState" class="text-center text-slate-400 py-6 hidden">No results. Try clearing filters.</div>
+      </div>
+    </div>
+
+    <!-- Dealer Summary -->
+    <div class="card mt-6 fade-in">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold">Dealer Summary</h2>
+        <div class="text-sm text-slate-500">Counts & totals (respect current filters)</div>
+      </div>
+      <div class="overflow-x-auto mt-3">
+        <table class="min-w-full text-sm">
+          <thead class="bg-slate-50">
+            <tr class="text-left">
+              <th class="px-3 py-2">Dealer</th>
+              <th class="px-3 py-2">Vehicles</th>
+              <th class="px-3 py-2">Total Amount</th>
+              <th class="px-3 py-2">Avg / Vehicle</th>
+            </tr>
+          </thead>
+          <tbody id="dealerBody" class="divide-y divide-slate-100"></tbody>
+        </table>
       </div>
     </div>
 
@@ -177,7 +174,7 @@
   <!-- Toast -->
   <div id="toast" class="toast"></div>
 
-  <!-- MODAL -->
+  <!-- Modal -->
   <div id="modal" class="modal-root">
     <div class="modal-panel">
       <div class="flex items-center justify-between mb-4">
@@ -186,17 +183,17 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div><label class="text-xs text-slate-500">Purchase Date</label><input id="fDate" type="date" class="input" /></div>
-        <div><label class="text-xs text-slate-500">Year/Make/Model</label><input id="fModel" class="input" placeholder="2018 Toyota Camry" /></div>
+        <div><label class="text-xs text-slate-500">Purchase Date</label><input id="fDate" type="date" class="input"></div>
+        <div><label class="text-xs text-slate-500">Year/Make/Model</label><input id="fModel" class="input" placeholder="2018 Toyota Camry"></div>
 
-        <div><label class="text-xs text-slate-500">VIN</label><input id="fVIN" class="input" /></div>
-        <div><label class="text-xs text-slate-500">Body Style</label><input id="fBody" class="input" placeholder="SUV / Sedan / Pickup" /></div>
+        <div><label class="text-xs text-slate-500">VIN</label><input id="fVIN" class="input"></div>
+        <div><label class="text-xs text-slate-500">Body Style</label><input id="fBody" class="input" placeholder="SUV / Sedan / Pickup"></div>
 
-        <div><label class="text-xs text-slate-500">Mileage</label><input id="fMileage" type="number" class="input" /></div>
-        <div><label class="text-xs text-slate-500">MSRP ($)</label><input id="fMSRP" type="number" class="input" /></div>
+        <div><label class="text-xs text-slate-500">Mileage</label><input id="fMileage" type="number" class="input"></div>
+        <div><label class="text-xs text-slate-500">MSRP ($)</label><input id="fMSRP" type="number" class="input"></div>
 
-        <div><label class="text-xs text-slate-500">Selling Dealership</label><input id="fDealer" class="input" /></div>
-        <div><label class="text-xs text-slate-500">Agreed Amount ($)</label><input id="fAmount" type="number" class="input" /></div>
+        <div><label class="text-xs text-slate-500">Selling Dealership</label><input id="fDealer" class="input"></div>
+        <div><label class="text-xs text-slate-500">Agreed Amount ($)</label><input id="fAmount" type="number" class="input"></div>
 
         <div>
           <label class="text-xs text-slate-500">Payment Method</label>
@@ -211,16 +208,13 @@
           <label class="text-xs text-slate-500">Title Status</label>
           <select id="fTitleStatus" class="select"><option>Not Received</option><option>Received</option><option>Branded</option></select>
         </div>
-        <div>
-          <label class="text-xs text-slate-500">Title Received Date</label>
-          <input id="fTitleDate" type="date" class="input" />
-        </div>
+        <div><label class="text-xs text-slate-500">Title Received Date</label><input id="fTitleDate" type="date" class="input"></div>
 
         <div>
           <label class="text-xs text-slate-500">Floorplan</label>
           <select id="fFloor" class="select"><option>None</option><option>NextGear</option><option>Westlake</option><option>AFC</option><option>Other</option></select>
         </div>
-        <div class="md:col-span-2"><label class="text-xs text-slate-500">Notes</label><input id="fNotes" class="input" /></div>
+        <div class="md:col-span-2"><label class="text-xs text-slate-500">Notes</label><input id="fNotes" class="input"></div>
       </div>
 
       <div class="mt-5 flex justify-end gap-3">
@@ -230,103 +224,104 @@
   </div>
 
 <script>
-  /* ================= CONFIG (EmailJS - optional) ================= */
-  const EMAIL_ENABLED = false; // set true after configuring keys below
-  const EMAIL = {
-    publicKey: "YOUR_EMAILJS_PUBLIC_KEY",
-    serviceId: "YOUR_SERVICE_ID",
-    templateId: "YOUR_TEMPLATE_ID",
-    map: (row) => ({
-      vin: row["VIN"] || "",
-      model: row["Year/Make/Model"] || "",
-      amount: row["Agreed Amount ($)"] || 0,
-      date: row["Purchase Date"] || "",
-      floorplan: row["Floorplan"] || "None",
-      status: row["Payment Status"] || "Pending",
-      dealer: row["Selling Dealership"] || "",
-    })
-  };
-  if (EMAIL_ENABLED) try { emailjs.init(EMAIL.publicKey); } catch(e) { console.warn("EmailJS init failed", e); }
+  /* ===== Helpers & State ===== */
+  const $  = (s)=>document.querySelector(s);
+  const $$ = (s)=>Array.from(document.querySelectorAll(s));
+  const LS_KEY="vat_data_v4"; const FILTERS_KEY="vat_filters_v3";
+  let rows = loadData(), monthlyChart, editingIndex=null;
 
-  /* ================= HELPERS ================= */
-  const $  = (s) => document.querySelector(s);
-  const $$ = (s) => Array.from(document.querySelectorAll(s));
-  const LS_KEY = "vat_data_v4";        // schema with Body Style, Title fields, MSRP
-  const FILTERS_KEY = "vat_filters_v2";
-
-  const loadData = () => { try { return JSON.parse(localStorage.getItem(LS_KEY)) ?? []; } catch { return []; } };
-  const saveData = (rows) => localStorage.setItem(LS_KEY, JSON.stringify(rows));
-  let rows = loadData(), monthlyChart, editingIndex = null;
-
+  function loadData(){ try{return JSON.parse(localStorage.getItem(LS_KEY))||[]}catch{return[]} }
+  function saveData(v){ localStorage.setItem(LS_KEY, JSON.stringify(v)); }
   function fmtMoney(n){ const x=Number(n||0); return x.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:0}); }
   function ym(dstr){ const d=new Date(dstr); return isNaN(d)?"":d.toISOString().slice(0,7); }
-  function toast(msg,undoFn){ const t=$("#toast"); t.textContent=""; t.innerHTML = msg + (undoFn?` <button id="undoBtn" class="underline ml-2">Undo</button>`:""); t.classList.add("show"); setTimeout(()=>t.classList.remove("show"), 3500); if(undoFn){ $("#undoBtn").onclick=()=>{ undoFn(); t.classList.remove("show"); }; } }
+  function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2500); }
 
-  /* ================= MODAL OPEN/CLOSE ================= */
-  function openModal(){ const m=$("#modal"); m.classList.add("flex"); document.body.style.overflow="hidden"; }
-  function closeModal(){ const m=$("#modal"); m.classList.remove("flex"); document.body.style.overflow=""; }
-  $("#closeModal").addEventListener("click", closeModal);
-  $("#modal").addEventListener("click", (e)=>{ if(e.target.id==="modal") closeModal(); });
-  document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeModal(); });
+  /* ===== Modal ===== */
+  function openModal(){ $("#modal").classList.add("flex"); document.body.style.overflow="hidden"; }
+  function closeModal(){ $("#modal").classList.remove("flex"); document.body.style.overflow=""; }
+  $("#closeModal").onclick=closeModal;
+  $("#modal").addEventListener("click",(e)=>{ if(e.target.id==="modal") closeModal(); });
+  document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeModal(); });
 
-  /* ================= VIN AUTOFILL ================= */
-  $("#fVIN").addEventListener("blur", async () => {
-    const vin = ($("#fVIN").value||"").trim(); if(vin.length<11) return;
+  /* ===== VIN autofill (NHTSA) ===== */
+  $("#fVIN").addEventListener("blur", async ()=>{
+    const vin=($("#fVIN").value||"").trim(); if(vin.length<11) return;
     try{
-      const url=`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${encodeURIComponent(vin)}?format=json`;
-      const res=await fetch(url); const data=await res.json(); const r=(data?.Results||[])[0]||{};
-      const year=r.ModelYear||"", make=r.Make||"", model=r.Model||"", body=r.BodyClass||r.Series||"";
-      if(year||make||model) $("#fModel").value=[year,make,model].filter(Boolean).join(" ");
+      const res=await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${encodeURIComponent(vin)}?format=json`);
+      const data=await res.json(); const r=(data?.Results||[])[0]||{};
+      const y=r.ModelYear||"", m=r.Make||"", mo=r.Model||"", body=r.BodyClass||r.Series||"";
+      if(y||m||mo) $("#fModel").value=[y,m,mo].filter(Boolean).join(" ");
       if(body) $("#fBody").value=body;
-    }catch(e){ console.warn("VIN decode failed", e); }
+    }catch(e){ console.warn("VIN decode failed",e); }
   });
 
-  /* ================= KPIs ================= */
-  function renderKPIs(){
-    const total=rows.length;
-    const cleared=rows.filter(r => (r["Payment Status"]||"").toLowerCase()==="cleared").length;
-    const pending=rows.filter(r => (r["Payment Status"]||"").toLowerCase()==="pending").length;
-    const totalValue=rows.reduce((s,r)=>s+Number(r["Agreed Amount ($)"]||0),0);
-    $("#kpiTotal").textContent=total; $("#kpiCleared").textContent=cleared; $("#kpiPending").textContent=pending; $("#kpiValue").textContent=fmtMoney(totalValue);
-  }
-
-  /* ================= FILTERS ================= */
+  /* ===== Filters ===== */
   function saveFilters(){
-    const f = { q: $("#searchInput").value, st: $("#statusFilter").value, m: $("#methodFilter").value, fl: $("#floorFilter").value, tt: $("#titleFilter").value };
+    const f={ q:$("#searchInput").value, st:$("#statusFilter").value, m:$("#methodFilter").value,
+              fl:$("#floorFilter").value, tt:$("#titleFilter").value, dl:$("#dealerFilter").value };
     localStorage.setItem(FILTERS_KEY, JSON.stringify(f));
   }
   function loadFilters(){
-    try{
-      const f=JSON.parse(localStorage.getItem(FILTERS_KEY)); if(!f) return;
-      $("#searchInput").value=f.q||""; $("#statusFilter").value=f.st||""; $("#methodFilter").value=f.m||""; $("#floorFilter").value=f.fl||""; $("#titleFilter").value=f.tt||"";
+    try{ const f=JSON.parse(localStorage.getItem(FILTERS_KEY)); if(!f) return;
+      $("#searchInput").value=f.q||""; $("#statusFilter").value=f.st||"";
+      $("#methodFilter").value=f.m||""; $("#floorFilter").value=f.fl||"";
+      $("#titleFilter").value=f.tt||""; $("#dealerFilter").value=f.dl||"";
     }catch{}
   }
+
   function rowMatches(r){
-    const q  = $("#searchInput").value.toLowerCase().trim();
-    const st = $("#statusFilter").value;
-    const m  = $("#methodFilter").value;
-    const fl = $("#floorFilter").value;
-    const tt = $("#titleFilter").value;
+    const q=$("#searchInput").value.toLowerCase().trim();
+    const st=$("#statusFilter").value, m=$("#methodFilter").value, fl=$("#floorFilter").value, tt=$("#titleFilter").value, dl=$("#dealerFilter").value;
     const hay=[r.VIN,r["Year/Make/Model"],r["Selling Dealership"],r["Body Style"],r.Notes,r["Floorplan"]].map(x=>(x||"").toLowerCase()).join(" ");
     if(q && !hay.includes(q)) return false;
-    if(st && (r["Payment Status"]||"") !== st) return false;
-    if(m  && (r["Payment Method"]||"") !== m) return false;
-    if(fl && (r["Floorplan"]||"None") !== fl) return false;
-    if(tt && (r["Title Status"]||"Not Received") !== tt) return false;
+    if(st && (r["Payment Status"]||"")!==st) return false;
+    if(m  && (r["Payment Method"]||"")!==m) return false;
+    if(fl && (r["Floorplan"]||"None")!==fl) return false;
+    if(tt && (r["Title Status"]||"Not Received")!==tt) return false;
+    if(dl && (r["Selling Dealership"]||"")!==dl) return false;
     return true;
   }
 
-  /* ================= MONTHLY ================= */
-  function monthMap(){ const m={}; rows.forEach(r=>{ const k=ym(r["Purchase Date"]); if(k) m[k]=(m[k]||0)+1; }); return Object.fromEntries(Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0]))); }
-  function renderMonthlyTable(){ const tb=$("#monthlyBody"); tb.innerHTML=""; Object.entries(monthMap()).forEach(([k,c])=>{ const tr=document.createElement("tr"); tr.innerHTML=`<td class="px-3 py-2">${k}</td><td class="px-3 py-2 font-semibold">${c}</td>`; tb.appendChild(tr); }); }
-  function renderMonthlyChart(){
-    const map=monthMap(), labels=Object.keys(map), data=Object.values(map);
-    const ctx=$("#monthlyChart");
-    if(monthlyChart) monthlyChart.destroy();
-    monthlyChart=new Chart(ctx,{type:"bar",data:{labels,datasets:[{label:"Vehicles",data}]} ,options:{responsive:true,animation:{duration:500,easing:"easeOutQuart"},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+  /* ===== Dealer Filter Options & Summary ===== */
+  function getDealers(list){ const s=new Set(); list.forEach(r=>{ const d=(r["Selling Dealership"]||"").trim(); if(d) s.add(d); }); return Array.from(s).sort((a,b)=>a.localeCompare(b)); }
+  function renderDealerOptions(){
+    const sel=$("#dealerFilter"); const current=sel.value;
+    const dealers=getDealers(rows);
+    sel.innerHTML=`<option value="">Dealer: All</option>`+dealers.map(d=>`<option ${d===current?"selected":""}>${d}</option>`).join("");
+  }
+  function computeDealerSummary(){
+    const filtered=rows.filter(rowMatches); const map={};
+    filtered.forEach(r=>{ const d=(r["Selling Dealership"]||"").trim()||"—"; const amt=Number(r["Agreed Amount ($)"]||0);
+      if(!map[d]) map[d]={count:0,total:0}; map[d].count++; map[d].total+=amt; });
+    return Object.entries(map).map(([dealer,v])=>({dealer,...v,avg:v.count? v.total/v.count:0})).sort((a,b)=>b.total-a.total);
+  }
+  function renderDealerSummary(){
+    const tb=$("#dealerBody"); tb.innerHTML="";
+    const arr=computeDealerSummary();
+    if(arr.length===0){ tb.innerHTML=`<tr><td class="px-3 py-3 text-slate-400" colspan="4">No data.</td></tr>`; return; }
+    let gc=0, gt=0;
+    arr.forEach(s=>{ const tr=document.createElement("tr");
+      tr.innerHTML=`<td class="px-3 py-2">${s.dealer}</td>
+                    <td class="px-3 py-2 font-semibold">${s.count}</td>
+                    <td class="px-3 py-2 font-semibold">${fmtMoney(s.total)}</td>
+                    <td class="px-3 py-2">${fmtMoney(s.avg)}</td>`;
+      tb.appendChild(tr); gc+=s.count; gt+=s.total; });
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td class="px-3 py-2 font-bold">Total</td>
+                  <td class="px-3 py-2 font-bold">${gc}</td>
+                  <td class="px-3 py-2 font-bold">${fmtMoney(gt)}</td>
+                  <td class="px-3 py-2">—</td>`;
+    tb.appendChild(tr);
   }
 
-  /* ================= TABLE ================= */
+  /* ===== Monthly ===== */
+  function monthMap(){ const m={}; rows.forEach(r=>{ const k=ym(r["Purchase Date"]); if(k) m[k]=(m[k]||0)+1; }); return Object.fromEntries(Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0]))); }
+  function renderMonthlyTable(){ const tb=$("#monthlyBody"); tb.innerHTML=""; Object.entries(monthMap()).forEach(([k,c])=>{ const tr=document.createElement("tr"); tr.innerHTML=`<td class="px-3 py-2">${k}</td><td class="px-3 py-2 font-semibold">${c}</td>`; tb.appendChild(tr); }); }
+  function renderMonthlyChart(){ const map=monthMap(), labels=Object.keys(map), data=Object.values(map);
+    const ctx=$("#monthlyChart"); if(monthlyChart) monthlyChart.destroy();
+    monthlyChart=new Chart(ctx,{type:"bar",data:{labels,datasets:[{label:"Vehicles",data}]},options:{responsive:true,animation:{duration:500,easing:"easeOutQuart"},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}}); }
+
+  /* ===== Table ===== */
   const STATUSES=["Pending","Cleared","Paid"];
   function pill(v){ const s=(v||"").toLowerCase(); const cls=s==="cleared"?"chip chip-emerald":s==="paid"?"chip chip-indigo":"chip chip-amber"; return `<span class="${cls}">${v||"—"}</span>`; }
   function val(v){ return v ? v : `<span class="placeholder-cell">—</span>`; }
@@ -334,19 +329,18 @@
   function renderTable(){
     const tb=$("#tableBody"); tb.innerHTML="";
     const visible=rows.filter(rowMatches);
-    $("#emptyState").classList.toggle("hidden", visible.length>0);
-
-    visible.forEach((r)=>{
+    $("#emptyState").classList.toggle("hidden",visible.length>0);
+    visible.forEach(r=>{
       const idx=rows.indexOf(r);
       const tr=document.createElement("tr"); tr.className="fade-in";
       tr.innerHTML=`
-        <td class="px-3 py-2 whitespace-nowrap">${val(r["Purchase Date"])}</td>
+        <td class="px-3 py-2">${val(r["Purchase Date"])}</td>
         <td class="px-3 py-2">${val(r["Year/Make/Model"])}</td>
         <td class="px-3 py-2">${val(r["VIN"])}</td>
         <td class="px-3 py-2">${val(r["Body Style"])}</td>
         <td class="px-3 py-2">${val(r["Mileage"])}</td>
         <td class="px-3 py-2">${val(r["Selling Dealership"])}</td>
-        <td class="px-3 py-2">${val(r["MSRP ($)"] ? fmtMoney(r["MSRP ($)"]) : "")}</td>
+        <td class="px-3 py-2">${val(r["MSRP ($)"]?fmtMoney(r["MSRP ($)"]):"")}</td>
         <td class="px-3 py-2 font-semibold">${fmtMoney(r["Agreed Amount ($)"])}</td>
         <td class="px-3 py-2">${val(r["Payment Method"])}</td>
         <td class="px-3 py-2">
@@ -369,51 +363,28 @@
     });
 
     tb.querySelectorAll("select[title='Change status']").forEach(sel=>{
-      sel.addEventListener("change",(e)=>{
-        const i=Number(e.target.dataset.idx); const v=e.target.value;
-        rows[i]["Payment Status"]=v; saveData(rows); renderTable(); renderKPIs();
-      });
+      sel.addEventListener("change",(e)=>{ const i=Number(e.target.dataset.idx); rows[i]["Payment Status"]=e.target.value; saveData(rows); renderTable(); renderKPIs(); });
     });
 
     lucide.createIcons();
   }
 
-  function renderAll(){ renderKPIs(); renderTable(); renderMonthlyTable(); renderMonthlyChart(); }
+  function renderKPIs(){
+    const total=rows.length;
+    const cleared=rows.filter(r=>(r["Payment Status"]||"").toLowerCase()==="cleared").length;
+    const pending=rows.filter(r=>(r["Payment Status"]||"").toLowerCase()==="pending").length;
+    const totalValue=rows.reduce((s,r)=>s+Number(r["Agreed Amount ($)"]||0),0);
+    $("#kpiTotal").textContent=total; $("#kpiCleared").textContent=cleared; $("#kpiPending").textContent=pending; $("#kpiValue").textContent=fmtMoney(totalValue);
+  }
 
-  /* ================= IMPORT / EXPORT ================= */
-  $("#fileInput").addEventListener("change",(e)=>{
-    const f=e.target.files[0]; if(!f) return; const ext=f.name.split(".").pop().toLowerCase();
-    const append=(objs)=>{ const norm=objs.map(normalizeRow); rows=rows.concat(norm); saveData(rows); renderAll(); toast(`Imported ${norm.length} row(s).`); };
-    if(ext==="csv"){ Papa.parse(f,{header:true,skipEmptyLines:true,complete:(res)=>append(res.data)}); }
-    else{ const r=new FileReader(); r.onload=(evt)=>{ const wb=XLSX.read(evt.target.result,{type:"binary"}); append(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""})); }; r.readAsBinaryString(f); }
-    e.target.value="";
-  });
+  function renderAll(){ renderKPIs(); renderDealerOptions(); renderTable(); renderDealerSummary(); renderMonthlyTable(); renderMonthlyChart(); }
 
-  $("#dlTemplate").addEventListener("click", ()=>{
-    const headers=["Purchase Date","Year/Make/Model","VIN","Body Style","Mileage","Selling Dealership","MSRP ($)","Agreed Amount ($)","Payment Method","Payment Status","Title Status","Title Received Date","Floorplan","Notes"];
-    const csv=headers.join(",")+"\n";
-    const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob);
-    const a=document.createElement("a"); a.href=url; a.download="vehicle_template.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-  });
-
-  $("#exportBtn").addEventListener("click", ()=>{
-    if(rows.length===0){ alert("No data to export"); return; }
-    const csv=Papa.unparse(rows);
-    const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob);
-    const a=document.createElement("a"); a.href=url; a.download="vehicle_acquisitions.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-  });
-
-  $("#exportJson").addEventListener("click", ()=>{
-    const blob=new Blob([JSON.stringify(rows,null,2)],{type:"application/json"}); const url=URL.createObjectURL(blob);
-    const a=document.createElement("a"); a.href=url; a.download="vehicle_acquisitions_backup.json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-  });
-
+  /* ===== Import / Export (with blank-row filter) ===== */
   function normalizeRow(obj){
     const map={
       "Purchase Date":["Purchase Date","Date"],
       "Year/Make/Model":["Year/Make/Model","Model"],
-      "VIN":["VIN"],
-      "Body Style":["Body Style","BodyClass","Series"],
+      "VIN":["VIN"], "Body Style":["Body Style","BodyClass","Series"],
       "Mileage":["Mileage","Odometer"],
       "Selling Dealership":["Selling Dealership","Dealer"],
       "MSRP ($)":["MSRP ($)","MSRP"],
@@ -427,79 +398,74 @@
     };
     const out={};
     for(const k in map){ out[k]=""; for(const c of map[k]){ if(obj[c]!==undefined && obj[c]!==null){ out[k]=obj[c]; break; } } }
-    if(!out["Floorplan"]) out["Floorplan"]="None";
-    if(!out["Title Status"]) out["Title Status"]="Not Received";
+    if(!out["Floorplan"]) out["Floorplan"]="None"; if(!out["Title Status"]) out["Title Status"]="Not Received";
     ["Purchase Date","Title Received Date"].forEach(key=>{ if(out[key]){ const d=new Date(out[key]); if(!isNaN(d)) out[key]=d.toISOString().slice(0,10); }});
-    const fix=(v)=>{ const n=(v+"").replace(/[^0-9.\-]/g,""); return n?Number(n):0; };
-    out["Agreed Amount ($)"]=fix(out["Agreed Amount ($)"]);
-    out["MSRP ($)"]=fix(out["MSRP ($)"]);
+    const fix=v=>{ const n=(v+"").replace(/[^0-9.\-]/g,""); return n?Number(n):0; };
+    out["Agreed Amount ($)"]=fix(out["Agreed Amount ($)"]); out["MSRP ($)"]=fix(out["MSRP ($)"]);
     return out;
   }
+  function isRowEmpty(r){
+    const hasVIN=(r["VIN"]||"").trim()!==""; const hasModel=(r["Year/Make/Model"]||"").trim()!=="";
+    const hasDealer=(r["Selling Dealership"]||"").trim()!==""; const hasNotes=(r["Notes"]||"").trim()!=="";
+    const hasAny=hasVIN||hasModel||hasDealer||hasNotes; const hasAmt=Number(r["Agreed Amount ($)"]||0)>0 || Number(r["MSRP ($)"]||0)>0;
+    return !(hasAny || hasAmt);
+  }
 
-  /* ================= ADD / EDIT / DELETE ================= */
-  $("#addBtn").addEventListener("click", ()=>{
-    editingIndex=null; $("#modalTitle").textContent="Add Vehicle";
-    $$("#modal input, #modal select").forEach(el=>el.value="");
-    $("#fTitleStatus").value="Not Received"; $("#fFloor").value="None"; $("#fStatus").value="Pending";
-    openModal();
+  $("#fileInput").addEventListener("change",(e)=>{
+    const f=e.target.files[0]; if(!f) return; const ext=f.name.split(".").pop().toLowerCase();
+    const append=(objs)=>{ const norm=objs.map(normalizeRow).filter(r=>!isRowEmpty(r)); rows=rows.concat(norm); saveData(rows); renderAll(); toast(`Imported ${norm.length} row(s).`); };
+    if(ext==="csv"){ Papa.parse(f,{header:true,skipEmptyLines:true,complete:(res)=>append(res.data)}); }
+    else{ const r=new FileReader(); r.onload=(evt)=>{ const wb=XLSX.read(evt.target.result,{type:"binary"}); append(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""})); }; r.readAsBinaryString(f); }
+    e.target.value="";
   });
 
-  $("#saveVehicle").addEventListener("click", async ()=>{
-    const row={
-      "Purchase Date":$("#fDate").value,
-      "Year/Make/Model":$("#fModel").value,
-      "VIN":$("#fVIN").value,
-      "Body Style":$("#fBody").value,
-      "Mileage":$("#fMileage").value,
-      "Selling Dealership":$("#fDealer").value,
-      "MSRP ($)":Number($("#fMSRP").value||0),
-      "Agreed Amount ($)":Number($("#fAmount").value||0),
-      "Payment Method":$("#fMethod").value,
-      "Payment Status":$("#fStatus").value,
-      "Title Status":$("#fTitleStatus").value||"Not Received",
-      "Title Received Date":$("#fTitleDate").value||"",
-      "Floorplan":$("#fFloor").value||"None",
-      "Notes":$("#fNotes").value
-    };
-    if(editingIndex===null){
-      rows.push(row);
-      if(EMAIL_ENABLED){
-        try{ await emailjs.send(EMAIL.serviceId,EMAIL.templateId,EMAIL.map(row)); toast("Vehicle added ✓ Email sent."); }
-        catch(e){ console.warn("Email send failed", e); toast("Vehicle added ✓ Email send failed."); }
-      } else toast("Vehicle added ✓");
-    }else{
-      rows[editingIndex]=row; editingIndex=null; toast("Vehicle updated ✓");
-    }
+  $("#dlTemplate").addEventListener("click",()=>{
+    const headers=["Purchase Date","Year/Make/Model","VIN","Body Style","Mileage","Selling Dealership","MSRP ($)","Agreed Amount ($)","Payment Method","Payment Status","Title Status","Title Received Date","Floorplan","Notes"];
+    const csv=headers.join(",")+"\n"; const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob);
+    const a=document.createElement("a"); a.href=url; a.download="vehicle_template.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  });
+  $("#exportBtn").addEventListener("click",()=>{
+    if(rows.length===0){ alert("No data to export"); return; }
+    const csv=Papa.unparse(rows); const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob);
+    const a=document.createElement("a"); a.href=url; a.download="vehicle_acquisitions.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  });
+  $("#exportJson").addEventListener("click",()=>{
+    const blob=new Blob([JSON.stringify(rows,null,2)],{type:"application/json"}); const url=URL.createObjectURL(blob);
+    const a=document.createElement("a"); a.href=url; a.download="vehicle_acquisitions_backup.json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  });
+
+  /* ===== Add/Edit/Delete ===== */
+  $("#addBtn").addEventListener("click",()=>{ editingIndex=null; $("#modalTitle").textContent="Add Vehicle"; $$("#modal input, #modal select").forEach(el=>el.value=""); $("#fTitleStatus").value="Not Received"; $("#fFloor").value="None"; $("#fStatus").value="Pending"; openModal(); });
+  $("#saveVehicle").addEventListener("click",()=>{
+    const row={"Purchase Date":$("#fDate").value,"Year/Make/Model":$("#fModel").value,"VIN":$("#fVIN").value,"Body Style":$("#fBody").value,"Mileage":$("#fMileage").value,
+      "Selling Dealership":$("#fDealer").value,"MSRP ($)":Number($("#fMSRP").value||0),"Agreed Amount ($)":Number($("#fAmount").value||0),
+      "Payment Method":$("#fMethod").value,"Payment Status":$("#fStatus").value,"Title Status":$("#fTitleStatus").value||"Not Received","Title Received Date":$("#fTitleDate").value||"",
+      "Floorplan":$("#fFloor").value||"None","Notes":$("#fNotes").value};
+    if(editingIndex===null){ rows.push(row); toast("Vehicle added ✓"); } else { rows[editingIndex]=row; editingIndex=null; toast("Vehicle updated ✓"); }
     saveData(rows); renderAll(); closeModal();
   });
 
   $("#tableBody").addEventListener("click",(e)=>{
-    const btn=e.target.closest("button[data-action]"); if(!btn) return;
-    const idx=Number(btn.dataset.idx); const act=btn.dataset.action;
-    if(act==="delete"){
-      const removed=rows.splice(idx,1)[0]; saveData(rows); renderAll();
-      toast("Deleted.", ()=>{ rows.splice(idx,0,removed); saveData(rows); renderAll(); });
-    }
-    if(act==="edit"){
-      const r=rows[idx]; editingIndex=idx; $("#modalTitle").textContent="Edit Vehicle";
+    const btn=e.target.closest("button[data-action]"); if(!btn) return; const idx=Number(btn.dataset.idx); const act=btn.dataset.action;
+    if(act==="delete"){ const removed=rows.splice(idx,1)[0]; saveData(rows); renderAll(); toast("Deleted."); }
+    if(act==="edit"){ const r=rows[idx]; editingIndex=idx; $("#modalTitle").textContent="Edit Vehicle";
       $("#fDate").value=r["Purchase Date"]||""; $("#fModel").value=r["Year/Make/Model"]||""; $("#fVIN").value=r["VIN"]||"";
       $("#fBody").value=r["Body Style"]||""; $("#fMileage").value=r["Mileage"]||""; $("#fDealer").value=r["Selling Dealership"]||"";
       $("#fMSRP").value=r["MSRP ($)"]||""; $("#fAmount").value=r["Agreed Amount ($)"]||"";
       $("#fMethod").value=r["Payment Method"]||""; $("#fStatus").value=r["Payment Status"]||"Pending";
       $("#fTitleStatus").value=r["Title Status"]||"Not Received"; $("#fTitleDate").value=r["Title Received Date"]||"";
-      $("#fFloor").value=r["Floorplan"]||"None"; $("#fNotes").value=r["Notes"]||"";
-      openModal();
+      $("#fFloor").value=r["Floorplan"]||"None"; $("#fNotes").value=r["Notes"]||""; openModal();
     }
   });
 
-  /* ================= FILTER EVENTS ================= */
-  ["searchInput","statusFilter","methodFilter","floorFilter","titleFilter"].forEach(id=>{
-    $("#"+id).addEventListener("input", ()=>{ saveFilters(); renderTable(); });
-    $("#"+id).addEventListener("change", ()=>{ saveFilters(); renderTable(); });
+  /* ===== Filter events ===== */
+  ["searchInput","statusFilter","methodFilter","floorFilter","titleFilter","dealerFilter"].forEach(id=>{
+    $("#"+id).addEventListener("input", ()=>{ saveFilters(); renderTable(); renderDealerSummary(); });
+    $("#"+id).addEventListener("change",()=>{ saveFilters(); renderTable(); renderDealerSummary(); });
   });
-  $("#clearFilters").addEventListener("click", ()=>{ $("#searchInput").value=""; $("#statusFilter").value=""; $("#methodFilter").value=""; $("#floorFilter").value=""; $("#titleFilter").value=""; saveFilters(); renderTable(); });
+  $("#clearFilters").addEventListener("click",()=>{ $("#searchInput").value=""; $("#statusFilter").value=""; $("#methodFilter").value=""; $("#floorFilter").value=""; $("#titleFilter").value=""; $("#dealerFilter").value=""; saveFilters(); renderAll(); });
 
-  /* ================= INIT ================= */
+  /* ===== Init ===== */
   loadFilters();
   renderAll();
   lucide.createIcons();
